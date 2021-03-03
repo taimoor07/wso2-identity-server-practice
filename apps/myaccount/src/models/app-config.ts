@@ -64,6 +64,7 @@ export interface FeatureConfigInterface {
 export interface ServiceResourceEndpointsInterface {
     applications: string;
     associations: string;
+    approvals: string;
     authorize: string;
     challenges: string;
     challengeAnswers: string;
