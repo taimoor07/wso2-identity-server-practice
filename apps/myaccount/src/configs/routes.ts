@@ -20,7 +20,7 @@ import { RouteInterface } from "@wso2is/core/models";
 import { AppLayout } from "@wso2is/react-components";
 import { lazy } from "react";
 import { AppConstants } from "../constants";
-
+import { ApprovalsPage, } from "../pages";
 /**
  * Get app layout routes.
  *
@@ -53,6 +53,24 @@ export const getAppRoutes = (): RouteInterface[] => {
             id: "overview",
             name: "common:overview",
             path: AppConstants.getPaths().get("OVERVIEW"),
+            protected: true,
+            showOnSidePanel: true
+        },
+        // {
+        //     component: lazy(() => import("../pages/operations")),
+        //      icon: "overview",
+        //     id: "operations",
+        //     name: "operations",
+        //     path: "/myaccount/operations",
+        //     protected: true,
+        //     showOnSidePanel: true
+        // },
+        {
+            component: ApprovalsPage,
+            icon: "approvals",
+            id: "approvals",
+            name: "common:approvals",
+            path: "/myaccount/approvals",
             protected: true,
             showOnSidePanel: true
         },

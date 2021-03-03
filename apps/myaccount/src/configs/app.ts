@@ -69,6 +69,7 @@ export class Config {
         return {
             applications: `${this.getDeploymentConfig().serverHost}/api/users/v1/me/applications`,
             associations: `${this.getDeploymentConfig().serverHost}/api/users/v1/me/associations`,
+            approvals: `${this.getDeploymentConfig().serverHost}/api/users/v1/me/approval-tasks`,
             authorize: `${this.getDeploymentConfig().serverHost}/oauth2/authorize`,
             challengeAnswers: `${this.getDeploymentConfig().serverHost}/api/users/v1/me/challenge-answers`,
             challenges: `${this.getDeploymentConfig().serverHost}/api/users/v1/me/challenges`,
