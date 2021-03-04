@@ -34,6 +34,8 @@ export const getSidePanelIcons = () => {
         apps: import(`../themes/${ theme }/assets/images/icons/app-icon.svg`),
         consent: import(`../themes/${ theme }/assets/images/icons/tick-circle-icon.svg`),
         overview: import(`../themes/${ theme }/assets/images/icons/dashboard-icon.svg`),
+        approvals: import(`../themes/${ theme }/assets/images/icons/outline-icons/pending-approval-outline.svg`),
+        roles: import(`../themes/${ theme }/assets/images/icons/briefcase-icon.svg`),
         personal: import(`../themes/${ theme }/assets/images/icons/user-icon.svg`),
         security: import(`../themes/${ theme }/assets/images/icons/lock-icon.svg`),
         session: import(`../themes/${ theme }/assets/images/icons/monitor-icon.svg`)

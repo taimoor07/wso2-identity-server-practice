@@ -56,24 +56,6 @@ export const getAppRoutes = (): RouteInterface[] => {
             protected: true,
             showOnSidePanel: true
         },
-        // {
-        //     component: lazy(() => import("../pages/operations")),
-        //      icon: "overview",
-        //     id: "operations",
-        //     name: "operations",
-        //     path: "/myaccount/operations",
-        //     protected: true,
-        //     showOnSidePanel: true
-        // },
-        {
-            component: ApprovalsPage,
-            icon: "approvals",
-            id: "approvals",
-            name: "common:approvals",
-            path: "/myaccount/approvals",
-            protected: true,
-            showOnSidePanel: true
-        },
         {
             component: lazy(() => import("../pages/applications")),
             icon: "apps",
@@ -98,6 +80,24 @@ export const getAppRoutes = (): RouteInterface[] => {
             id: "security",
             name: "common:security",
             path: AppConstants.getPaths().get("SECURITY"),
+            protected: true,
+            showOnSidePanel: true
+        },
+        // {
+        //     component: lazy(() => import("../pages/operations")),
+        //      icon: "overview",
+        //     id: "operations",
+        //     name: "operations",
+        //     path: "/myaccount/operations",
+        //     protected: true,
+        //     showOnSidePanel: true
+        // },
+        {
+            component: ApprovalsPage,
+            icon: "approvals",
+            id: "approvals",
+            name: "Approvals",
+            path: "/myaccount/approvals",
             protected: true,
             showOnSidePanel: true
         },

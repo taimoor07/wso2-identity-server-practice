@@ -441,8 +441,8 @@ export const Approvals: FunctionComponent<ApprovalsProps> = (
 
     return (
         <SettingsSection
-            description={ t("views:sections.approvals:description") }
-            header={ t("views:sections.approvals.heading") }
+            description={ t("pages.sections.approvals:description") }
+            header={ t("pages.sections.approvals.heading") }
             primaryAction={
                 (
                     approvals

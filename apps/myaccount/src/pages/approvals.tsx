@@ -44,8 +44,8 @@ export const ApprovalsPage = (): JSX.Element => {
 
     return (
         <InnerPageLayout
-            pageTitle={ t("myAccount:pages:approvals.title") }
-            pageDescription={ t("myAccount:pages:approvals.subTitle") }
+            pageTitle={ t("Approvals") }
+            pageDescription={ t("Review operational tasks that requires your approval") }
         >
             <Divider hidden/>
             <Grid>

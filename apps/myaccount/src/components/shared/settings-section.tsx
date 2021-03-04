@@ -143,7 +143,7 @@ export const SettingsSection: FunctionComponent<PropsWithChildren<SettingsSectio
         <Card className={ `settings-card ${ classes }` } fluid padded="very" data-testid={ `${testId}-card` }>
             <Card.Content data-testid={ `${testId}-card-content` }>
                 <Grid>
-                    <Grid.Row className="header-section" columns={ 2 } data-testid={ `${testId}-card-content-header` }>
+                    {/* <Grid.Row className="header-section" columns={ 2 } data-testid={ `${testId}-card-content-header` }>
                         <Grid.Column width={ (icon || iconMini) ? 10 : 16 } className="no-padding">
                             <Header as="h2">{ header }</Header>
                             <Card.Meta>{ description }</Card.Meta>
@@ -189,7 +189,7 @@ export const SettingsSection: FunctionComponent<PropsWithChildren<SettingsSectio
                                 )
                                 : null
                         }
-                    </Grid.Row>
+                    </Grid.Row> */}
                     <Grid.Row
                         className={ `main-content ${ contentPadding ? "" : "no-padding" }` }
                         columns={ 1 }
