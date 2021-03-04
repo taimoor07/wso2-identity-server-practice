@@ -102,6 +102,15 @@ export const getAppRoutes = (): RouteInterface[] => {
             showOnSidePanel: true
         },
         {
+            component: lazy(() => import("../pages/roles")),
+            icon: "roles",
+            id: "roles",
+            name: "Roles",
+            path: "/myaccount/roles",
+            protected: true,
+            showOnSidePanel: true
+        },
+        {
             component: lazy(() => import("../pages/privacy")),
             icon: "security",
             id: "privacy",

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2020, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * WSO2 Inc. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -16,12 +16,7 @@
  * under the License.
  */
 
-export * from "./account-security";
-export * from "./applications";
-export * from "./consent-management";
-export * from "./errors";
-export * from "./overview";
-export * from "./personal-info";
-export * from "./privacy";
-export * from "./approvals";
-export * from "./roles";
+export * from "./role-list";
+export * from "./wizard";
+export * from "./edit-role";
+

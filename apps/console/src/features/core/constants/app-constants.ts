@@ -240,7 +240,7 @@ export class AppConstants {
      * @return {Map<string, string>}
      */
     public static getPaths(): Map<string, string> {
-
+        // console.log("basepath----> ", AppConstants.getAdminViewBasePath())
         return new Map<string, string>()
             .set("ADMIN_OVERVIEW", `${ AppConstants.getAdminViewBasePath() }/overview`)
             .set("APPLICATIONS", `${ AppConstants.getDeveloperViewBasePath() }/applications`)
