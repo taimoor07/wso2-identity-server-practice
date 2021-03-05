@@ -44,10 +44,10 @@ const RolesPage = (): JSX.Element => {
 
     return (
         <InnerPageLayout
-            pageTitle={ t("Roles") }
-            pageDescription={ t("Create and manage roles, assign permissions for roles.") }
+            pageTitle=""
+            pageDescription=""
         >
-            <Divider hidden/>
+            {/* <Divider hidden/> */}
             <Grid>
                 <Grid.Row columns={ 1 }>
                     <Grid.Column width={ 16 }>

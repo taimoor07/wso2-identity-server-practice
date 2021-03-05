@@ -330,13 +330,16 @@ const RolesPage = (): ReactElement => {
                             data-testid="role-mgt-roles-list-add-button-icon"
                             name="add"
                         />
-                        { t("console:manage.features.roles.list.buttons.addButton", { type: "Role" }) }
+                        { t("New Role", { type: "Role" }) }
+                        {/* { t("console:manage.features.roles.list.buttons.addButton", { type: "Role" }) } */}
                     </PrimaryButton>
                 )
             }
-            title={ t("console:manage.pages.roles.title") }
-            description={ t("console:manage.pages.roles.subTitle") }
-        >
+            title={ t("Roles") }
+            description={ t("Create and manage roles, assign permissions for roles.") }
+            // title={ t("console:manage.pages.roles.title") }
+            // description={ t("console:manage.pages.roles.subTitle") }
+       >
             {
                 !isEmptyResults &&
                 <ListLayout
@@ -363,7 +366,8 @@ const RolesPage = (): ReactElement => {
                                 t("console:manage.features.roles.advancedSearch.form.inputs.filterValue" +
                                     ".placeholder")
                             }
-                            placeholder={ t("console:manage.features.roles.advancedSearch.placeholder") }
+                            placeholder={ t("Search by role name") }
+                            // placeholder={ t("console:manage.features.roles.advancedSearch.placeholder") }
                             defaultSearchAttribute="displayName"
                             defaultSearchOperator="co"
                             triggerClearQuery={ triggerClearQuery }
@@ -381,7 +385,8 @@ const RolesPage = (): ReactElement => {
                                 data-testid="role-mgt-roles-list-filters-dropdown"
                                 selection
                                 options={ filterOptions }
-                                placeholder= { t("console:manage.features.roles.list.buttons.filterDropdown") }
+                                placeholder= { t("Filter by") }
+                                // placeholder= { t("console:manage.features.roles.list.buttons.filterDropdown") }
                                 onChange={ handleFilterChange }
                             />
                         )
