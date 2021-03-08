@@ -83,15 +83,6 @@ export const getAppRoutes = (): RouteInterface[] => {
             protected: true,
             showOnSidePanel: true
         },
-        // {
-        //     component: lazy(() => import("../pages/operations")),
-        //      icon: "overview",
-        //     id: "operations",
-        //     name: "operations",
-        //     path: "/myaccount/operations",
-        //     protected: true,
-        //     showOnSidePanel: true
-        // },
         {
             component: ApprovalsPage,
             icon: "approvals",
@@ -116,6 +107,15 @@ export const getAppRoutes = (): RouteInterface[] => {
             id: "roles",
             name: "Roles",
             path: "/myaccount/roles",
+            protected: true,
+            showOnSidePanel: true
+        },
+        {
+            component: lazy(() => import("../pages/my-workflows")),
+            icon: "my-workflows",
+            id: "my-workflows",
+            name: "My Workflows",
+            path: "/myaccount/my-workflows",
             protected: true,
             showOnSidePanel: true
         },
