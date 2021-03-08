@@ -32,8 +32,9 @@ import { Button, Divider, Form, Grid, InputOnChangeData, Label } from "semantic-
 
 import { deleteRoleById, updateRoleDetails } from "../../api";
 // import { AppConstants, SharedUserStoreUtils, history } from "../../../core";
-import { history } from "../../../../helpers";
 import {  AppConstants } from "../../../../constants";
+import { SharedUserStoreUtils } from "../../utils";
+import { history } from "../../../../helpers";
 import { FeatureConfigInterface } from "../../../../models";
 
 import { PatchRoleDataInterface } from "../../models";
@@ -139,7 +140,7 @@ export const BasicRoleDetails: FunctionComponent<BasicRoleProps> = (props: Basic
      */
     const handleRoleNameChange = (event: ChangeEvent, data: InputOnChangeData): void => {
         // @todo
-        // setIsRoleNamePatternValid(SharedUserStoreUtils.validateInputAgainstRegEx(data?.value, userStoreRegEx));
+        setIsRoleNamePatternValid(SharedUserStoreUtils.validateInputAgainstRegEx(data?.value, userStoreRegEx));
     };
 
     /**

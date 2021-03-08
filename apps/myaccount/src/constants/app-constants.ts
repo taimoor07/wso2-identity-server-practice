@@ -178,7 +178,7 @@ export class AppConstants {
      * @return {Map<string, string>}
      */
     public static getPaths(): Map<string, string> {
-
+       
         return new Map<string, string>()
             .set("ACCESS_DENIED_ERROR", `${ this.getMainViewBasePath() }/access-denied-error`)
             .set("APPLICATIONS", `${ this.getMainViewBasePath() }/applications`)
@@ -191,6 +191,8 @@ export class AppConstants {
             .set("PERSONAL_INFO", `${ this.getMainViewBasePath() }/personal-info`)
             .set("SECURITY", `${ this.getMainViewBasePath() }/security`)
             .set("PRIVACY", `${ this.getMainViewBasePath() }/privacy`)
+            .set("ROLES", `${ this.getMainViewBasePath }/roles`)
+            .set("ROLE_EDIT", `${ this.getMainViewBasePath }/roles/:id`)
             .set("ROOT", "/")
             .set("UNAUTHORIZED", `${ this.getMainViewBasePath() }/unauthorized`)
             .set("STORING_DATA_DISABLED",`${ this.getMainViewBasePath() }/storing_data_disabled`);

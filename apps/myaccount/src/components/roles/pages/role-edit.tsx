@@ -25,7 +25,7 @@ import { useSelector } from "react-redux";
 import { history } from "../../../helpers";
 import { AppState } from "../../../store";
 import { FeatureConfigInterface } from "../../../models";
-import { EditRole } from "../../roles";
+import { EditRole } from "../components/edit-role";
 import { getRoleById } from "../api";
 
 const RoleEditPage: FunctionComponent<any> = (): ReactElement => {
@@ -46,7 +46,8 @@ const RoleEditPage: FunctionComponent<any> = (): ReactElement => {
                 if (response.status === 200) {
                     setRoleObject(response.data);
                 }
-            }).catch(() => {
+            }).catch((error) => {
+                console.log("🚀 ~ file: role-edit.tsx ~ line 52 ~ getRoleDetails ~ error", error)
                 // TODO: handle error
             })
             .finally(() => {
@@ -71,8 +72,9 @@ const RoleEditPage: FunctionComponent<any> = (): ReactElement => {
 
     const handleBackButtonClick = () => {
         // @todo
+        // console.log("back: ", AppConstants.getPaths().get("ROLES"))
         // history.push(AppConstants.getPaths().get("ROLES"));
-        history.push("/console/manage/roles");
+        history.push("/myaccount/roles");
     };
 
     return (

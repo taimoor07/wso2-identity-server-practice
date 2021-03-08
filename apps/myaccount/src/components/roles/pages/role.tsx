@@ -27,7 +27,8 @@ import { useDispatch } from "react-redux";
 import { Dropdown, DropdownItemProps, DropdownProps, Icon, PaginationProps } from "semantic-ui-react";
 // import { AdvancedSearchWithBasicFilters, UIConstants } from "../../core";
 import { AdvancedSearchWithBasicFilters } from "../components/helpers/advanced-search-with-basic-filters";
-import { CreateRoleWizard, RoleList } from "../../roles";
+import { CreateRoleWizard, RoleList } from "../components";
+// import { CreateRoleWizard, RoleList } from "../../roles";
 import { deleteRoleById, searchRoleList } from "../api";
 import { APPLICATION_DOMAIN, INTERNAL_DOMAIN } from "../constants";
 import { SearchRoleInterface } from "../models";
@@ -396,7 +397,7 @@ const RolesPage = (): ReactElement => {
                         isRoleListFetchRequestLoading || !(!searchQuery && paginatedRoles?.Resources?.length <= 0)
                     }
                     totalPages={ Math.ceil(initialRolList?.Resources?.length / listItemLimit) }
-                    totalListSize={ initialRolList?.Resources?.length }
+                    // totalListSize={ initialRolList?.Resources?.length }
                 >
                     <RoleList
                         advancedSearch={ (

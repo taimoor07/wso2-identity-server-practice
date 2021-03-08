@@ -25,3 +25,4 @@ export * from "./personal-info";
 export * from "./privacy";
 export * from "./approvals";
 export * from "./roles";
+export * from "./roles-edit";

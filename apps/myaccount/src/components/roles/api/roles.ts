@@ -41,7 +41,7 @@ export const getRoleById = (roleId: string): Promise<any> => {
             "Content-Type": "application/json"
         },
         method: HttpMethods.GET,
-        url: store.getState().config.endpoints.roles + "/" + roleId
+        url: "https://localhost:9443/scim2/Roles/" + roleId
     };
 
     return httpClient(requestConfig)

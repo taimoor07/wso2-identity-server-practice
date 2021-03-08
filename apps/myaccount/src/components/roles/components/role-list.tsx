@@ -138,7 +138,8 @@ export const RoleList: React.FunctionComponent<RoleListProps> = (props: RoleList
     const [ currentDeletedRole, setCurrentDeletedRole ] = useState<RolesInterface>();
 
     const handleRoleEdit = (roleId: string) => {
-        history.push(AppConstants.getPaths().get("ROLE_EDIT").replace(":id", roleId));
+        history.push(`/myaccount/roles/${roleId}`);
+        // history.push(AppConstants.getPaths().get("ROLE_EDIT").replace(":id", roleId));
     };
 
     /**
@@ -362,7 +363,7 @@ export const RoleList: React.FunctionComponent<RoleListProps> = (props: RoleList
                 onRowClick={
                     (e: SyntheticEvent, role: RolesInterface): void => {
                         handleRoleEdit(role?.id);
-                        onListItemClick(e, role);
+                        // onListItemClick(e, role);
                     }
                 }
                 placeholders={ showPlaceholders() }
