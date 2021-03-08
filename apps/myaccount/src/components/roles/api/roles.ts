@@ -35,13 +35,14 @@ const httpClient = IdentityClient.getInstance()
  * @param roleId role id to retrieve role details
  */
 export const getRoleById = (roleId: string): Promise<any> => {
+    // store.getState().config.endpoints.roles + "/" + roleId
     const requestConfig = {
         headers: {
             "Access-Control-Allow-Origin": store.getState().config.deployment.clientHost,
             "Content-Type": "application/json"
         },
         method: HttpMethods.GET,
-        url: "https://localhost:9443/scim2/Roles/" + roleId
+        url: store.getState().config.endpoints.roles + "/" + roleId
     };
 
     return httpClient(requestConfig)

@@ -351,12 +351,12 @@ export const AddRoleUsers: FunctionComponent<AddRoleUserProps> = (props: AddRole
         >
             <Modal.Header>
                 {
-                    t("console:manage.features.roles.addRoleWizard.users.assignUserModal.heading",
+                    t("Manage Users",
                         { type: "Role" })
                 }
                 <Heading subHeading ellipsis as="h6">
                     {
-                        t("console:manage.features.roles.addRoleWizard.users.assignUserModal.subHeading",
+                        t("Add new users or remove existing users assigned to the role.",
                             { type: "role" })
                     }
                 </Heading>
@@ -538,11 +538,9 @@ export const AddRoleUsers: FunctionComponent<AddRoleUserProps> = (props: AddRole
                                 ) : (
                                     <EmphasizedSegment>
                                         <EmptyPlaceholder
-                                            title={ t("console:manage.features.roles.edit.users.list." +
-                                                "emptyPlaceholder.title") }
+                                            title={ t("No Users Assigned") }
                                             subtitle={ [
-                                                t("console:manage.features.roles.edit.users.list." +
-                                                    "emptyPlaceholder.subtitles", { type: "role" })
+                                                t("There are no Users assigned to this role at the moment.", { type: "role" })
                                             ] }
                                             action={
                                                 !isReadOnly && (
@@ -552,8 +550,7 @@ export const AddRoleUsers: FunctionComponent<AddRoleUserProps> = (props: AddRole
                                                         onClick={ handleOpenAddNewGroupModal }
                                                         icon="plus"
                                                     >
-                                                        { t("console:manage.features.roles.edit.users.list." +
-                                                            "emptyPlaceholder.action") }
+                                                        { t("Subscribe") }
                                                     </PrimaryButton>
                                                 )
                                             }

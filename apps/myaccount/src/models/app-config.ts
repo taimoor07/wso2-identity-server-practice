@@ -62,6 +62,9 @@ export interface FeatureConfigInterface {
  * Service resource endpoints config.
  */
 export interface ServiceResourceEndpointsInterface {
+    roles: string;
+    groups: string;
+    permission: string;
     applications: string;
     associations: string;
     approvals: string;

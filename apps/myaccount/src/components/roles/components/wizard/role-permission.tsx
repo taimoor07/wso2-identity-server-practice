@@ -277,7 +277,7 @@ export const PermissionList: FunctionComponent<PermissionListProp> = (props: Per
                                     size="small"
                                     className="form-button"
                                 >
-                                    { t("console:manage.features.roles.addRoleWizard.permissions.buttons.update") }
+                                    { t("Update") }
                                 </Button>
                             </Grid.Column>
                         </Grid.Row>

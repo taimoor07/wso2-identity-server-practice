@@ -67,6 +67,9 @@ export class Config {
      */
     public static getServiceResourceEndpoints(): ServiceResourceEndpointsInterface {
         return {
+            roles: `${this.getDeploymentConfig().serverHost}/scim2/Roles`,
+            groups: `${this.getDeploymentConfig().serverHost}/scim2/Groups`,
+            permission: `${this.getDeploymentConfig().serverHost}/api/server/v1/permission-management/permissions`,
             applications: `${this.getDeploymentConfig().serverHost}/api/users/v1/me/applications`,
             associations: `${this.getDeploymentConfig().serverHost}/api/users/v1/me/associations`,
             approvals: `${this.getDeploymentConfig().serverHost}/api/users/v1/me/approval-tasks`,

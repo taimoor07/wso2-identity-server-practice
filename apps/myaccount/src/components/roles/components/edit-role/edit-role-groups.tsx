@@ -467,15 +467,15 @@ export const RoleGroupsList: FunctionComponent<RoleGroupsPropsInterface> = (
             className="user-roles"
         >
             <Modal.Header>
-                { t("console:manage.features.roles.edit.groups.addGroupsModal.heading") }
+                { t("Update Role Groups") }
                 <Heading subHeading ellipsis as="h6">
-                    { t("console:manage.features.roles.edit.groups.addGroupsModal.subHeading") }
+                    { t("Add new groups or remove existing groups assigned to the role.") }
                 </Heading>
             </Modal.Header>
             <Modal.Content image>
                 { alert && alertComponent }
                     <TransferComponent
-                        searchPlaceholder={ t("console:manage.features.transferList.searchPlaceholder",
+                        searchPlaceholder={ t("Search groups",
                             { type: "groups" }) }
                         addItems={ addGroups }
                         removeItems={ removeGroups }
@@ -487,8 +487,8 @@ export const RoleGroupsList: FunctionComponent<RoleGroupsPropsInterface> = (
                             isListEmpty={ !(groupList?.length > 0) }
                             listType="unselected"
                             listHeaders={ [
-                                t("console:manage.features.transferList.list.headers.0"),
-                                t("console:manage.features.transferList.list.headers.1"), ""
+                                t("Domain"),
+                                t("Name"), ""
                             ] }
                             handleHeaderCheckboxChange={ selectAllUnAssignedList }
                             isHeaderCheckboxChecked={ isSelectUnassignedRolesAllRolesChecked }
@@ -520,13 +520,12 @@ export const RoleGroupsList: FunctionComponent<RoleGroupsPropsInterface> = (
                             isListEmpty={ !(tempGroupList?.length > 0) }
                             listType="selected"
                             listHeaders={ [
-                                t("console:manage.features.transferList.list.headers.0"),
-                                t("console:manage.features.transferList.list.headers.1")
+                                t("Domain"),
+                                t("Name")
                             ] }
                             handleHeaderCheckboxChange={ selectAllAssignedList }
                             isHeaderCheckboxChecked={ isSelectAssignedAllRolesChecked }
-                            emptyPlaceholderContent={ t("console:manage.features.transferList.list." +
-                                "emptyPlaceholders.roles.selected", { type: "groups" }) }
+                            emptyPlaceholderContent={ t("There are no groups assigned with this role.", { type: "groups" }) }
                             data-testid="role-mgt-update-groups-modal-selected-groups-select-all-checkbox"
                         >
                             {
@@ -641,9 +640,9 @@ export const RoleGroupsList: FunctionComponent<RoleGroupsPropsInterface> = (
     return (
         <>
             <Heading as="h4">
-                { t("console:manage.features.roles.edit.groups.heading") }
+                { t("Assigned Groups") }
                 <Heading subHeading ellipsis as="h6">
-                    { t("console:manage.features.roles.edit.groups.subHeading") }
+                    { t("Add or remove the groups assigned to this role. Note that this will affect performing certain tasks.") }
                 </Heading>
             </Heading>
             <Divider hidden />
@@ -706,11 +705,9 @@ export const RoleGroupsList: FunctionComponent<RoleGroupsPropsInterface> = (
                                     <EmphasizedSegment>
                                         <EmptyPlaceholder
                                             data-testid="role-mgt-empty-groups-list"
-                                            title={ t("console:manage.features.roles.edit.groups." +
-                                                "emptyPlaceholder.title") }
+                                            title={ t("No Groups Assigned") }
                                             subtitle={ [
-                                                t("console:manage.features.roles.edit.groups." +
-                                                    "emptyPlaceholder.subtitles")
+                                                t("There are no groups assigned to this role at the moment.")
                                             ] }
                                             action={
                                                 !isReadOnly && (
@@ -719,8 +716,7 @@ export const RoleGroupsList: FunctionComponent<RoleGroupsPropsInterface> = (
                                                         icon="plus"
                                                         onClick={ handleOpenAddNewGroupModal }
                                                     >
-                                                        { t("console:manage.features.roles.edit.groups." +
-                                                            "emptyPlaceholder.action") }
+                                                        { t("Assign Group") }
                                                     </PrimaryButton>
                                                 )
                                             }

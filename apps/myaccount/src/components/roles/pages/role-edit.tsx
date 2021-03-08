@@ -87,7 +87,7 @@ const RoleEditPage: FunctionComponent<any> = (): ReactElement => {
             }
             backButton={ {
                 onClick: handleBackButtonClick,
-                text: t("console:manage.pages.rolesEdit.backButton", { type: "roles" })
+                text: t("Go back to roles", { type: "roles" })
             } }
             titleTextAlign="left"
             bottomMargin={ false }

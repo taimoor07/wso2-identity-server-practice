@@ -246,7 +246,7 @@ export const AssignGroups: FunctionComponent<AssignGroupsPropsInterface> = (
                     listType="unselected"
                     listHeaders={ [
                         t("console:manage.features.transferList.list.headers.0"),
-                        t("console:manage.features.transferList.list.headers.1"), ""
+                        t("Name"), ""
                     ] }
                     handleHeaderCheckboxChange={ selectAllUnAssignedList }
                     isHeaderCheckboxChecked={ isSelectUnassignedGroupsAllRolesChecked }
@@ -277,13 +277,12 @@ export const AssignGroups: FunctionComponent<AssignGroupsPropsInterface> = (
                     isListEmpty={ !(initialValues?.tempGroupList?.length > 0) }
                     listType="selected"
                     listHeaders={ [
-                        t("console:manage.features.transferList.list.headers.0"),
-                        t("console:manage.features.transferList.list.headers.1")
+                        t("Domain"),
+                        t("Name")
                     ] }
                     handleHeaderCheckboxChange={ selectAllAssignedList }
                     isHeaderCheckboxChecked={ isSelectAssignedAllGroupsChecked }
-                    emptyPlaceholderContent={ t("console:manage.features.transferList.list." +
-                    "emptyPlaceholders.roles.selected", { type: "groups" }) }
+                    emptyPlaceholderContent={ t("There are no groups assigned with this role.", { type: "groups" }) }
                     data-testid="user-mgt-add-user-wizard-modal-selected-groups-select-all-checkbox"
                 >
                     {

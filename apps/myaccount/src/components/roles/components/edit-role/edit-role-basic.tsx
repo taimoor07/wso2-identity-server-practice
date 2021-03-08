@@ -230,7 +230,7 @@ export const BasicRoleDetails: FunctionComponent<BasicRoleProps> = (props: Basic
                                         {
                                             isGroup
                                                 ? t("console:manage.features.groups.edit.basics.fields.groupName.name")
-                                                : t("console:manage.features.roles.edit.basics.fields.roleName.name")
+                                                : t("Role Name")
                                         }
                                     </label>
                                     <Field
@@ -298,7 +298,7 @@ export const BasicRoleDetails: FunctionComponent<BasicRoleProps> = (props: Basic
                                             }
                                             disabled={ !isRoleNamePatternValid && !isRegExLoading }
                                         >
-                                            { t("console:manage.features.roles.edit.basics.buttons.update") }
+                                            { t("Update") }
                                         </Button>
                                     )
                                 }
@@ -314,23 +314,23 @@ export const BasicRoleDetails: FunctionComponent<BasicRoleProps> = (props: Basic
                         <DangerZone
                             actionTitle={
                                 isGroup
-                                    ? t("console:manage.features.roles.edit.basics.dangerZone.actionTitle",
+                                    ? t("Delete Role",
                                     { type: "Group" })
-                                    : t("console:manage.features.roles.edit.basics.dangerZone.actionTitle",
+                                    : t("Delete Role",
                                     { type: "Role" })
                             }
                             header={
                                 isGroup
-                                    ? t("console:manage.features.roles.edit.basics.dangerZone.header",
+                                    ? t("Delete Role",
                                     { type: "group" })
-                                    : t("console:manage.features.roles.edit.basics.dangerZone.header",
+                                    : t("Delete Role",
                                     { type: "role" })
                             }
                             subheader={
                                 isGroup
-                                    ? t("console:manage.features.roles.edit.basics.dangerZone.subheader",
+                                    ? t("Once you delete the role, it cannot be recovered.",
                                     { type: "group" })
-                                    : t("console:manage.features.roles.edit.basics.dangerZone.subheader",
+                                    : t("Once you delete the role, it cannot be recovered.",
                                     { type: "role" })
                             }
                             onActionClick={ () => setShowDeleteConfirmationModal(!showRoleDeleteConfirmation) }
