@@ -69,6 +69,7 @@ export class Config {
         return {
             roles: `${this.getDeploymentConfig().serverHost}/scim2/Roles`,
             groups: `${this.getDeploymentConfig().serverHost}/scim2/Groups`,
+            users: `${this.getDeploymentConfig().serverHost}/scim2/Users`,
             permission: `${this.getDeploymentConfig().serverHost}/api/server/v1/permission-management/permissions`,
             applications: `${this.getDeploymentConfig().serverHost}/api/users/v1/me/applications`,
             associations: `${this.getDeploymentConfig().serverHost}/api/users/v1/me/associations`,

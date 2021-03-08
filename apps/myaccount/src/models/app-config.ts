@@ -64,6 +64,7 @@ export interface FeatureConfigInterface {
 export interface ServiceResourceEndpointsInterface {
     roles: string;
     groups: string;
+    users: string;
     permission: string;
     applications: string;
     associations: string;

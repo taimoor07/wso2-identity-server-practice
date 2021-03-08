@@ -233,7 +233,7 @@ export const AssignGroups: FunctionComponent<AssignGroupsPropsInterface> = (
             submitState={ triggerSubmit }
         >
             <TransferComponent
-                searchPlaceholder={ t("console:manage.features.transferList.searchPlaceholder",
+                searchPlaceholder={ t("Search Users",
                     { type: "groups" }) }
                 addItems={ addGroups }
                 removeItems={ removeGroups }

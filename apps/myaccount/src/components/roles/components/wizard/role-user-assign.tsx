@@ -184,6 +184,8 @@ export const AddRoleUsers: FunctionComponent<AddRoleUserProps> = (props: AddRole
                         setTempUserList(selectedUserList);
                     }
                 }
+            }).catch(error=>{
+                console.log("error: ", error)
             });
     };
 
@@ -364,8 +366,7 @@ export const AddRoleUsers: FunctionComponent<AddRoleUserProps> = (props: AddRole
             <Modal.Content image>
                 <TransferComponent
                     data-testid={ `${ testId }-user-list-transfer` }
-                    searchPlaceholder={ t("console:manage.features.roles.addRoleWizard.users.assignUserModal.list." +
-                        "searchPlaceholder") }
+                    searchPlaceholder={ t("Search Users") }
                     addItems={ addUser }
                     removeItems={ removeUser }
                     // TODO: Add two methods to handle the search of each list.
@@ -376,13 +377,12 @@ export const AddRoleUsers: FunctionComponent<AddRoleUserProps> = (props: AddRole
                         isListEmpty={ !(usersList?.length > 0) }
                         listType="unselected"
                         listHeaders={ [
-                            t("console:manage.features.roles.addRoleWizard.users.assignUserModal.list.listHeader")
+                            t("Name")
                         ] }
                         handleHeaderCheckboxChange={ selectAllUnAssignedList }
                         isHeaderCheckboxChecked={ isSelectAllUnAssignedUsers }
                         data-testid={ `${ testId }-unselected-users-select-all-checkbox` }
-                        emptyPlaceholderContent={ t("console:manage.features.transferList.list.emptyPlaceholders." +
-                            "roles.selected", { type: "users" }) }
+                        emptyPlaceholderContent={ t("There are no users assigned with this role.", { type: "users" }) }
                     >
                         {
                             usersList?.map((user, index)=> {
@@ -407,13 +407,12 @@ export const AddRoleUsers: FunctionComponent<AddRoleUserProps> = (props: AddRole
                         isListEmpty={ !(tempUserList?.length > 0) }
                         listType="selected"
                         listHeaders={ [
-                            t("console:manage.features.roles.addRoleWizard.users.assignUserModal.list.listHeader")
+                            t("Name")
                         ] }
                         handleHeaderCheckboxChange={ selectAllAssignedList }
                         isHeaderCheckboxChecked={ isSelectAllAssignedUsers }
                         data-testid={ `${ testId }-selected-users-select-all-checkbox` }
-                        emptyPlaceholderContent={ t("console:manage.features.transferList.list.emptyPlaceholders." +
-                            "roles.selected", { type: "users" }) }
+                        emptyPlaceholderContent={ t("There are no users assigned with this role.", { type: "users" }) }
                     >
                         {
                             tempUserList?.map((user, index)=> {
@@ -480,8 +479,7 @@ export const AddRoleUsers: FunctionComponent<AddRoleUserProps> = (props: AddRole
                                                     data-testid={ `${ testId }-users-list-search-input` }
                                                     icon={ <Icon name="search"/> }
                                                     onChange={ handleAssignedUserListSearch }
-                                                    placeholder={ t("console:manage.features.roles.addRoleWizard." +
-                                                        "users.assignUserModal.list.searchPlaceholder") }
+                                                    placeholder={ t("Search Users") }
                                                     floated="left"
                                                     size="small"
                                                 />
@@ -575,8 +573,7 @@ export const AddRoleUsers: FunctionComponent<AddRoleUserProps> = (props: AddRole
                         <Grid.Row columns={ 2 }>
                             <TransferComponent
                                 data-testid={ `${ testId }-update-user-list-transfer` }
-                                searchPlaceholder={ t("console:manage.features.roles.addRoleWizard.users." +
-                                    "assignUserModal.list.searchPlaceholder") }
+                                searchPlaceholder={ t("Search Users") }
                                 addItems={ addUser }
                                 removeItems={ removeUser }
                                 // TODO: Add two methods to handle the search of each list.
