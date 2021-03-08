@@ -552,7 +552,7 @@ export const AddRoleUsers: FunctionComponent<AddRoleUserProps> = (props: AddRole
                                                     >
                                                         { t("Subscribe") }
                                                     </PrimaryButton>
-                                                )
+                                                )   
                                             }
                                             image={ getEmptyPlaceholderIllustrations().emptyList }
                                             imageSize="tiny"
