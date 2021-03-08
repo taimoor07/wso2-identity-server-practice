@@ -150,12 +150,12 @@ export const RoleBasics: FunctionComponent<RoleBasicProps> = (props: RoleBasicPr
                             type="text"
                             name="rolename"
                             label={
-                                t("console:manage.features.roles.addRoleWizard.forms.roleBasicDetails." +
-                                        "roleName.label",{ type: "Role" })
+                                // t("console:manage.features.roles.addRoleWizard.forms.roleBasicDetails." +
+                                //         "roleName.label",{ type: "Role" })
+                                t("Role Name")
                             }
                             placeholder={
-                                t("console:manage.features.roles.addRoleWizard.forms.roleBasicDetails.roleName." +
-                                        "placeholder", { type: "Role" })
+                                t("Enter Role name", { type: "Role" })
                             }
                             required={ true }
                             requiredErrorMessage={

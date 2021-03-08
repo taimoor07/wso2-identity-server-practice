@@ -340,7 +340,7 @@ export const RoleList: React.FunctionComponent<RoleListProps> = (props: RoleList
                     setCurrentDeletedRole(role);
                     setShowDeleteConfirmationModal(!showRoleDeleteConfirmation);
                 },
-                popupText: (): string => t("console:manage.features.roles.list.popups.delete",
+                popupText: (): string => t("Delete Role",
                     { type: "Role" }),
                 renderer: "semantic-icon"
             }
@@ -404,14 +404,14 @@ export const RoleList: React.FunctionComponent<RoleListProps> = (props: RoleList
                     closeOnDimmerClick={ false }
                 >
                     <ConfirmationModal.Header>
-                        { t("console:manage.features.roles.list.confirmations.deleteItem.header") }
+                        { t("Are you sure?") }
                     </ConfirmationModal.Header>
                     <ConfirmationModal.Message attached warning>
-                        { t("console:manage.features.roles.list.confirmations.deleteItem.message",
+                        { t("This action is irreversible and will permanently delete the selected role",
                             { type: "role" }) }
                     </ConfirmationModal.Message>
                     <ConfirmationModal.Content>
-                        { t("console:manage.features.roles.list.confirmations.deleteItem.content",
+                        { t("If you delete this role, the permissions attached to it will be deleted and the users attached to it will no longer be able to perform intended actions which were previously allowed. Please proceed with caution.",
                             { type: "role" }) }
                     </ConfirmationModal.Content>
                 </ConfirmationModal>

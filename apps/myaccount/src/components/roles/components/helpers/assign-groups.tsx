@@ -245,7 +245,7 @@ export const AssignGroups: FunctionComponent<AssignGroupsPropsInterface> = (
                     isListEmpty={ !(initialValues?.groupList?.length > 0) }
                     listType="unselected"
                     listHeaders={ [
-                        t("console:manage.features.transferList.list.headers.0"),
+                        t("Domain"),
                         t("Name"), ""
                     ] }
                     handleHeaderCheckboxChange={ selectAllUnAssignedList }

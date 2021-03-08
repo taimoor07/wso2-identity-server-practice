@@ -304,7 +304,7 @@ export const CreateRoleWizard: FunctionComponent<CreateRoleProps> = (props: Crea
             />
         ),
         icon: getRolesWizardStepIcons().general,
-        title: t("console:manage.features.roles.addRoleWizard.wizardSteps.0")
+        title: t("Basic Details")
     },{
         content: (
             <PermissionList
@@ -316,7 +316,7 @@ export const CreateRoleWizard: FunctionComponent<CreateRoleProps> = (props: Crea
             />
         ),
         icon: <Icon name="key" inverted size="large" />,
-        title: t("console:manage.features.roles.addRoleWizard.wizardSteps.1")
+        title: t("Permission Selection")
     },{
         content: (
             <AssignGroupsUsers
@@ -342,7 +342,7 @@ export const CreateRoleWizard: FunctionComponent<CreateRoleProps> = (props: Crea
             />
         ),
         icon: getRolesWizardStepIcons().assignUser,
-        title: t("console:manage.features.roles.addRoleWizard.wizardSteps.4")
+        title: t("Groups & Users")
     },{
         content: (
             <CreateRoleSummary
@@ -354,7 +354,7 @@ export const CreateRoleWizard: FunctionComponent<CreateRoleProps> = (props: Crea
             />
         ),
         icon: getRolesWizardStepIcons().summary,
-        title: t("console:manage.features.roles.addRoleWizard.wizardSteps.3")
+        title: t("Summary")
     }];
 
     /**
@@ -402,7 +402,7 @@ export const CreateRoleWizard: FunctionComponent<CreateRoleProps> = (props: Crea
             data-testid={ testId }
         >
             <Modal.Header className="wizard-header">
-                { t("console:manage.features.roles.addRoleWizard.heading", { type: "Role" }) }
+                { t("Create Role", { type: "Role" }) }
                 {
                     wizardState && wizardState[ WizardStepsFormTypes.BASIC_DETAILS ]?.roleName
                         ? " - " + wizardState[ WizardStepsFormTypes.BASIC_DETAILS ]?.roleName
@@ -410,7 +410,7 @@ export const CreateRoleWizard: FunctionComponent<CreateRoleProps> = (props: Crea
                 }
                 <Heading as="h6">
                     {
-                        t("console:manage.features.roles.addRoleWizard.subHeading", { type: "role" })
+                        t("Create a new role in the system.", { type: "role" })
                     }
                 </Heading>
             </Modal.Header>
@@ -449,7 +449,7 @@ export const CreateRoleWizard: FunctionComponent<CreateRoleProps> = (props: Crea
                                     onClick={ changeStepToNext }
                                     data-testid={ `${ testId }-next-button` }
                                 >
-                                    { t("console:manage.features.roles.addRoleWizard.buttons.next") }
+                                    { t("Next") }
                                     <Icon name="arrow right" data-testid={ `${ testId }-next-button-icon` }/>
                                 </PrimaryButton>
                             ) }
@@ -461,7 +461,7 @@ export const CreateRoleWizard: FunctionComponent<CreateRoleProps> = (props: Crea
                                         onClick={ handleFinishFlow }
                                         data-testid={ `${ testId }-initial-finish-button` }
                                     >
-                                        { t("console:manage.features.roles.addRoleWizard.buttons.finish") }
+                                        { t("Finish") }
                                     </Button>
                             ) }
                             { currentStep === WIZARD_STEPS.length - 1 && (
@@ -470,7 +470,7 @@ export const CreateRoleWizard: FunctionComponent<CreateRoleProps> = (props: Crea
                                     onClick={ changeStepToNext }
                                     data-testid={ `${ testId }-finish-button` }
                                 >
-                                    { t("console:manage.features.roles.addRoleWizard.buttons.finish") }
+                                    { t("Finish") }
                                 </PrimaryButton>
                             ) }
                             { currentStep > 0 && (
@@ -480,7 +480,7 @@ export const CreateRoleWizard: FunctionComponent<CreateRoleProps> = (props: Crea
                                     data-testid={ `${ testId }-previous-button` }
                                 >
                                     <Icon name="arrow left" data-testid={ `${ testId }-previous-button-icon` }/>
-                                    { t("console:manage.features.roles.addRoleWizard.buttons.previous") }
+                                    { t("Previous") }
                                 </LinkButton>
                             ) }
                         </Grid.Column>
