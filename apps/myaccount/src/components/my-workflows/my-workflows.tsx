@@ -1,20 +1,31 @@
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useEffect, useState } from "react";
 import { Grid } from "semantic-ui-react";
-import { AppState } from "../../store";
+import { getWorkflowTasks } from "./api";
+import { MyworkflowList } from "./components/my-workflow-list";
+import { MyWorkFlowsInterface } from "./modals";
 
 export const MyWorkflows: FunctionComponent<{}> = (): JSX.Element => {
-    // const accessConfig: FeatureConfigInterface = useSelector((state: AppState) => state?.config?.ui?.features);
-    // const allowedScopes: string = useSelector((state: AppState) => state?.authenticationInformation?.scope);
+    const [myWorkflows, setMyWorkflows] = useState([]);
 
+    useEffect(() => {
+        getWorkflowTasksDetails();
+    }, []);
+
+    const getWorkflowTasksDetails = (): void => {
+        getWorkflowTasks()
+            .then(response => {
+                console.log("🚀 ~ getWorkflowTasksDetails ~ response", response)
+                setMyWorkflows(response.data)
+            }).catch((error) => {
+                console.log("Error while fetching my workflows status data", error)
+        });
+    };
+    
     return (
-        <Grid className="my-workflows-page">
-            <Grid.Row>
-                <Grid.Column width={ 8 }>
-                    {/* <AccountStatusWidget/> */}
-                    <p>testing</p>
-                    <p>testing</p>
-                </Grid.Column>
-            </Grid.Row>
-        </Grid>
+        <div className="my-workflows-page">
+            <MyworkflowList
+                list={myWorkflows}
+            />
+        </div>
     );
 };
