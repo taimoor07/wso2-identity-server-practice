@@ -67,6 +67,8 @@ export const RoleUserDetails: FunctionComponent<RoleUserDetailsProps> = (
         dispatch(addAlert(alert));
     };
 
+    const [updateRoleState, setUpdateRoleState] = useState(null)
+
     const onUserUpdate = (userList: any) => {
         const newUsers: CreateRoleMemberInterface[] = [];
 
@@ -87,6 +89,7 @@ export const RoleUserDetails: FunctionComponent<RoleUserDetailsProps> = (
 
         updateRoleDetails(roleObject.id, roleData)
             .then(() => {
+                setUpdateRoleState(!updateRoleState);
                 handleAlerts({
                     description: t("console:manage.features.roles.notifications.updateRole.success.description"),
                     level: AlertLevels.SUCCESS,
@@ -94,11 +97,12 @@ export const RoleUserDetails: FunctionComponent<RoleUserDetailsProps> = (
                 });
                 onRoleUpdate();
             }).catch(() => {
-            handleAlerts({
-                description: t("console:manage.features.roles.notifications.updateRole.error.description"),
-                level: AlertLevels.ERROR,
-                message: t("console:manage.features.roles.notifications.updateRole.error.message")
-            });
+                setUpdateRoleState(!updateRoleState);
+                handleAlerts({
+                    description: t("console:manage.features.roles.notifications.updateRole.error.description"),
+                    level: AlertLevels.ERROR,
+                    message: t("console:manage.features.roles.notifications.updateRole.error.message")
+                });
         });
     };
 
@@ -111,6 +115,7 @@ export const RoleUserDetails: FunctionComponent<RoleUserDetailsProps> = (
             userStore={ currentUserStore }
             assignedUsers={ roleObject.users }
             onSubmit={ onUserUpdate }
+            updateRoleState= {updateRoleState}
         />
     );
 };

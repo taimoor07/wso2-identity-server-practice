@@ -34,11 +34,13 @@ import _ from "lodash";
 import React, { FunctionComponent, ReactElement, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Grid, Icon, Input, Modal, Table } from "semantic-ui-react";
+import { useSelector } from "react-redux";
 import { UIConstants } from "../../constants";
 import { getEmptyPlaceholderIllustrations } from "../../configs";
 import { UserBasicInterface } from "../../models";
 import { getUsersList } from "../../api";
 import { CONSUMER_USERSTORE } from "../../constants";
+import { AppState } from "../../../../store";
 
 /**
  * Proptypes for the role user list component.
@@ -52,6 +54,7 @@ interface AddRoleUserProps extends TestableComponentInterface {
     userStore?: string;
     initialValues?: UserBasicInterface[];
     isReadOnly?: boolean;
+    updateRoleState: boolean;
     /**
      * Fired when a user is removed from teh list.
      */
@@ -69,7 +72,8 @@ export const AddRoleUsers: FunctionComponent<AddRoleUserProps> = (props: AddRole
         userStore,
         isReadOnly,
         handleTempUsersListChange,
-        [ "data-testid" ]: testId
+        [ "data-testid" ]: testId,
+        updateRoleState
     } = props;
 
     const { t } = useTranslation();
@@ -93,11 +97,38 @@ export const AddRoleUsers: FunctionComponent<AddRoleUserProps> = (props: AddRole
 
     const initialRenderTempUsers = useRef(true);
 
+    const profileInfo = useSelector((state: AppState) => state.authenticationInformation.profileInfo);
+
+    const subscribeMeLable = "Subscribe me for this role";
+    const unSubscribeMeLable = "Unsubscribe me for this role";
+    const [ alreadySub, setAlreadySub ] = useState(false);
+    const [ subBtnLable, setSubBtnLable ] = useState(unSubscribeMeLable);
+    
+    useEffect(() => {
+        let fountIndex = tempUserList.findIndex(user => user.id == profileInfo.id);
+        if(fountIndex !== -1) {
+            setAlreadySub(true);
+            setSubBtnLable(unSubscribeMeLable);
+        } else {
+            setAlreadySub(false);
+            setSubBtnLable(subscribeMeLable);
+        } 
+    }, [updateRoleState]);
+
     useEffect(() => {
         if (initialRenderTempUsers.current) {
             initialRenderTempUsers.current = false;
         } else {
             handleTempUsersListChange && handleTempUsersListChange(tempUserList);
+        }
+
+        let fountIndex = tempUserList.findIndex(user => user.id == profileInfo.id);
+        if(fountIndex !== -1) {
+            setAlreadySub(true);
+            setSubBtnLable(unSubscribeMeLable);
+        } else {
+            setAlreadySub(false);
+            setSubBtnLable(subscribeMeLable);
         }
 
     }, [ tempUserList ]);
@@ -337,7 +368,22 @@ export const AddRoleUsers: FunctionComponent<AddRoleUserProps> = (props: AddRole
         }
     };
 
+    const [currentUser, setCurrentUser ] = useState(null);
+    useEffect(()=>{
+        let subCurrUser = {
+            emails: profileInfo.emails,
+            id: profileInfo.id,
+            meta: profileInfo.meta,
+            name:  profileInfo.name,
+            userName: profileInfo.userName
+        }
+        setCurrentUser(subCurrUser);
+    }, [profileInfo])
+
     const handleAddUserSubmit = () => {
+        let fountIndex = tempUserList.findIndex(user => user.id == currentUser.id);
+        alreadySub? tempUserList.splice(fountIndex, 1): tempUserList.push(currentUser); 
+
         onSubmit(tempUserList);
         setSelectedUsers(tempUserList);
         setAddNewUserModalView(false);
@@ -466,7 +512,25 @@ export const AddRoleUsers: FunctionComponent<AddRoleUserProps> = (props: AddRole
 
     return (
         <>
-            { isEdit ?
+            <Grid>
+                <Grid.Row>
+                    <Grid.Column>
+                        <Button
+                            primary
+                            type="submit"
+                            size="large"
+                            className="form-button"
+                            onClick={ () => {
+                                handleAddUserSubmit();
+                            } }
+                        >
+                            { subBtnLable}
+                        </Button>
+                    </Grid.Column>
+                </Grid.Row>
+            </Grid>
+
+            {/* { isEdit ?
                 <Grid>
                     <Grid.Row>
                         <Grid.Column computer={ 8 }>
@@ -502,8 +566,7 @@ export const AddRoleUsers: FunctionComponent<AddRoleUserProps> = (props: AddRole
                                                     <Table.Row>
                                                         <Table.HeaderCell/>
                                                         <Table.HeaderCell>
-                                                            { t("console:manage.features.roles.edit.users.list." +
-                                                                "header") }
+                                                            { t("Users") }
                                                         </Table.HeaderCell>
                                                     </Table.Row>
                                                 </Table.Header>
@@ -663,7 +726,7 @@ export const AddRoleUsers: FunctionComponent<AddRoleUserProps> = (props: AddRole
                         }
                     </Grid>
                 </Forms>
-            }
+            } */}
         </>
     );
 };
