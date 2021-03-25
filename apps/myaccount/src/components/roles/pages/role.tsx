@@ -23,13 +23,14 @@ import { ListLayout, PageLayout } from "@wso2is/react-components";
 import _ from "lodash";
 import React, { ReactElement, SyntheticEvent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { DropdownItemProps, DropdownProps, PaginationProps } from "semantic-ui-react";
-import { deleteRoleById, getRolesForUser, searchRoleList, subscribeForRole } from "../api";
+import { deleteRoleById, getAssignedRolesForUser, getUnassignedRolesForUser, searchRoleList, subscribeForRole } from "../api";
 import { CreateRoleWizard, RoleList } from "../components";
 import { AdvancedSearchWithBasicFilters } from "../components/helpers/advanced-search-with-basic-filters";
 import { APPLICATION_DOMAIN, INTERNAL_DOMAIN } from "../constants";
 import { SearchRoleInterface } from "../models";
+import { AppState } from "../../../store";
 
 const ROLES_SORTING_OPTIONS: DropdownItemProps[] = [
     {
@@ -75,7 +76,8 @@ const filterOptions: DropdownItemProps[] = [
 const RolesPage = (): ReactElement => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
-
+    
+    const currentUserId = useSelector((state: AppState) => state.authenticationInformation.profileInfo.id);
     const [ listItemLimit, setListItemLimit ] = useState<number>(10);
     const [ listOffset, setListOffset ] = useState<number>(0);
     const [ showWizard, setShowWizard ] = useState<boolean>(false);
@@ -120,10 +122,13 @@ const RolesPage = (): ReactElement => {
     const getRoles = () => {
         setRoleListFetchRequestLoading(true);
 
-        getRolesForUser()
-            .then((response) => {
-                const data = formateData(response.data);
-                if (response.status === 200) {
+        // get assigned and unassigned roles for this user
+        const assignedRolse = getAssignedRolesForUser();
+        const unAssignedRolse = getUnassignedRolesForUser();
+        Promise.all([assignedRolse, unAssignedRolse])
+            .then((values) => {
+                const data = formateData(values[0].data.roles, values[1].data.Resources);
+                if (values.length >= 2) {
                     const roleResources = data.Resources;
 
                     if (roleResources && roleResources instanceof Array) {
@@ -143,21 +148,27 @@ const RolesPage = (): ReactElement => {
                     }
                 }
             })
+            .catch(error => {
+                console.log("🚀 ~ file: role.tsx ~ line 150 ~ getRoles ~ error", error)
+            })
             .finally(() => {
                 setRoleListFetchRequestLoading(false);
             });
     };
 
-    const formateData = (responseRoles) => {
+    const formateData = (assignedRoles, unAssignedRoles) => {
         const roles = [];
         
-        responseRoles.assigned.map(role=>{
-            roles.push({displayName: role, status: "assigned"})
+        assignedRoles.shift();
+        assignedRoles.map(role=>{
+            roles.push({id: role.value, displayName: role.display, status: "assigned"})
         });
-        responseRoles.unassigned.map(role=>{
-            roles.push({displayName: role, status: "unassigned"})
-        });          
 
+        unAssignedRoles.map(role=>{
+            const found = roles.some(thisRole=> thisRole.displayName === role.displayName);
+            if(!found) roles.push({id: role.id, displayName: role.displayName, status: "unassigned"})
+        });
+          
         const data = {
             Resources: roles,
             itemsPerPage: roles.length,
@@ -171,18 +182,27 @@ const RolesPage = (): ReactElement => {
 
     const subscribeForThisRole = (role) => {
         setIsLoading(true);
-        const roleData = {
-            "op": role.status === "assigned"? "remove": "add",
-            "value": role.displayName
-        }
 
-        subscribeForRole(roleData).then((response) => {
-           setIsLoading(false);
-            getRoles();
-        }).catch((error) => {
-            setIsLoading(false);
-            getRoles();
-        });
+        const roleData = {
+            "Operations":[{
+                "op": role.status === "assigned"? "remove": "add",
+                "path":"users",
+                "value":[{
+                    "value": currentUserId
+                }]
+            }],
+            "schemas":["urn:ietf:params:scim:api:messages:2.0:PatchOp"]
+        };
+
+        subscribeForRole(role.id, roleData)
+            .then((response) => {
+                console.log("🚀 ~ file: role.tsx ~ line 189 ~ .then ~ response", response)
+                setIsLoading(false);
+                getRoles();
+            }).catch((error) => {
+                setIsLoading(false);
+                getRoles();
+            });
     };
 
     /**

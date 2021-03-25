@@ -68,6 +68,8 @@ export class Config {
     public static getServiceResourceEndpoints(): ServiceResourceEndpointsInterface {
         return {
             roles: `${this.getDeploymentConfig().serverHost}/scim2/Roles`,
+            customRoles: `${this.getDeploymentConfig().serverHost}/t/carbon.super/scim2/Roles`,
+            customAssignedRoles: `${this.getDeploymentConfig().serverHost}/t/carbon.super/scim2/Me`,
             groups: `${this.getDeploymentConfig().serverHost}/scim2/Groups`,
             customGroups: `${this.getDeploymentConfig().serverHost}/telenorpkstn/rest/v1/me/groups`,
             users: `${this.getDeploymentConfig().serverHost}/scim2/Users`,

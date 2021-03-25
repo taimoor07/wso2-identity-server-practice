@@ -63,6 +63,8 @@ export interface FeatureConfigInterface {
  */
 export interface ServiceResourceEndpointsInterface {
     roles: string;
+    customRoles: string;
+    customAssignedRoles: string;
     groups: string;
     customGroups: string;
     users: string;

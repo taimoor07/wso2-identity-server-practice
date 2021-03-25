@@ -78,15 +78,32 @@ export const updateRoleDetails = (roleId: string, roleData: PatchRoleDataInterfa
         });
 };
 
-// get all assigned and unassigned roles for current user
-export const getRolesForUser = (): Promise<any> => {
+// get assigned and unassigned roles for user
+export const getAssignedRolesForUser = (): Promise<any> => {
     const requestConfig = {
         headers: {
             "Access-Control-Allow-Origin": store.getState().config.deployment.clientHost,
             "Content-Type": "application/json"
         },
         method: HttpMethods.GET,
-        url: store.getState().config.endpoints.customGroups
+        url: store.getState().config.endpoints.customAssignedRoles
+    };
+
+    return httpClient(requestConfig)
+        .then((response) => {
+            return Promise.resolve(response);
+        }).catch((error) => {
+            return Promise.reject(error);
+        });
+};
+export const getUnassignedRolesForUser = (): Promise<any> => {
+    const requestConfig = {
+        headers: {
+            "Access-Control-Allow-Origin": store.getState().config.deployment.clientHost,
+            "Content-Type": "application/json"
+        },
+        method: HttpMethods.GET,
+        url: store.getState().config.endpoints.customRoles + "?filter=displayName+sw+APP_&startIndex=0&count=10"
     };
 
     return httpClient(requestConfig)
@@ -98,7 +115,7 @@ export const getRolesForUser = (): Promise<any> => {
 };
 
 // self assignment -- subscribe current user for role
-export const subscribeForRole = (roleData): Promise<any> => {
+export const subscribeForRole = (roleId, roleData): Promise<any> => {
     const requestConfig = {
         data: roleData,
         headers: {
@@ -106,7 +123,7 @@ export const subscribeForRole = (roleData): Promise<any> => {
             "Content-Type": "application/json"
         },
         method: HttpMethods.PATCH,
-        url: store.getState().config.endpoints.customGroups
+        url: store.getState().config.endpoints.customRoles + "/" + roleId
     };
 
     return httpClient(requestConfig)
