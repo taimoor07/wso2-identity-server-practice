@@ -86,7 +86,7 @@ export const getRolesForUser = (): Promise<any> => {
             "Content-Type": "application/json"
         },
         method: HttpMethods.GET,
-        url: "https://localhost:9443/telenorpkstn/rest/v1/me/groups"
+        url: store.getState().config.endpoints.customGroups
     };
 
     return httpClient(requestConfig)
@@ -106,7 +106,7 @@ export const subscribeForRole = (roleData): Promise<any> => {
             "Content-Type": "application/json"
         },
         method: HttpMethods.PATCH,
-        url: "https://localhost:9443/telenorpkstn/rest/v1/me/groups"
+        url: store.getState().config.endpoints.customGroups
     };
 
     return httpClient(requestConfig)

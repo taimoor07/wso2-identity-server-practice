@@ -281,7 +281,7 @@ export const RoleList: React.FunctionComponent<RoleListProps> = (props: RoleList
                         </Header.Content>
                     </Header>
                 ),
-                title: t("console:manage.features.roles.list.columns.name")
+                title: t("Name")
             },
             {
                 allowToggleVisibility: false,
@@ -301,7 +301,7 @@ export const RoleList: React.FunctionComponent<RoleListProps> = (props: RoleList
                             { role?.status === "assigned"? "Un Subscribe": "Subscribe" }
                         </Button>
                 },
-                title: t("console:manage.features.roles.list.columns.name")
+                title: "Subscribe/Un Subscribe"
             }
         ];
     };
@@ -323,7 +323,7 @@ export const RoleList: React.FunctionComponent<RoleListProps> = (props: RoleList
                     onRowClick={ null }
                     placeholders={ showPlaceholders() }
                     selectable={ selection }
-                    showHeader={ showHeader }
+                    showHeader={ true }
                     transparent={ !isLoading && (showPlaceholders() !== null) }
                     data-testid={ testId }
                 />:
