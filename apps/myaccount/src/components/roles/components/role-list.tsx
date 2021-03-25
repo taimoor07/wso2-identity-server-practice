@@ -16,36 +16,29 @@
  * under the License.
  */
 
-import { RoleConstants } from "@wso2is/core/constants";
 import {
     LoadableComponentInterface,
     RoleListInterface,
     RolesInterface,
     TestableComponentInterface
 } from "@wso2is/core/models";
-import { CommonUtils } from "@wso2is/core/utils";
 import {
+    Button,
     AnimatedAvatar,
     AppAvatar,
-    ConfirmationModal,
     DataTable,
     DataTablePropsInterface,
     EmptyPlaceholder,
     LinkButton,
     PrimaryButton,
-    TableActionsInterface,
-    TableColumnInterface
+    TableColumnInterface,
+    ContentLoader
 } from "@wso2is/react-components";
 import React, { ReactElement, ReactNode, SyntheticEvent, useState } from "react";
-import { Trans, useTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { Header, Icon, Label, SemanticICONS } from "semantic-ui-react";
-// import { AppConstants, UIConstants, getEmptyPlaceholderIllustrations, history } from "../../core";
-import {  AppConstants } from "../../../constants";
-import { history } from "../../../helpers";
 import { getEmptyPlaceholderIllustrations } from "../configs";
-import { UIConstants } from "../constants";
-
-import { APPLICATION_DOMAIN } from "../constants";
+import { UIConstants, APPLICATION_DOMAIN } from "../constants";
 
 interface RoleListProps extends LoadableComponentInterface, TestableComponentInterface {
     /**
@@ -64,6 +57,10 @@ interface RoleListProps extends LoadableComponentInterface, TestableComponentInt
      * Roles list.
      */
     roleList: RoleListInterface;
+
+    // subscribe for role
+    subscribeForThisRole: (role) => void;
+
     /**
      * Role delete callback.
      * @param {RolesInterface} role - Deleting role.
@@ -129,18 +126,11 @@ export const RoleList: React.FunctionComponent<RoleListProps> = (props: RoleList
         showMetaContent,
         showHeader,
         showRoleType,
-        [ "data-testid" ]: testId
+        [ "data-testid" ]: testId,
+        subscribeForThisRole
     } = props;
 
     const { t } = useTranslation();
-
-    const [ showRoleDeleteConfirmation, setShowDeleteConfirmationModal ] = useState<boolean>(false);
-    const [ currentDeletedRole, setCurrentDeletedRole ] = useState<RolesInterface>();
-
-    const handleRoleEdit = (roleId: string) => {
-        history.push(`/myaccount/roles/${roleId}`);
-        // history.push(AppConstants.getPaths().get("ROLE_EDIT").replace(":id", roleId));
-    };
 
     /**
      * Util method to generate listing header content.
@@ -295,126 +285,49 @@ export const RoleList: React.FunctionComponent<RoleListProps> = (props: RoleList
             },
             {
                 allowToggleVisibility: false,
-                dataIndex: "lastModified",
-                hidden: !showMetaContent,
-                id: "lastModified",
-                key: "lastModified",
-                render: (role: RolesInterface) => CommonUtils.humanizeDateDifference(role?.meta?.created),
-                title: t("console:manage.features.roles.list.columns.lastModified")
-            },
-            {
-                allowToggleVisibility: false,
-                dataIndex: "action",
-                id: "actions",
-                key: "actions",
-                textAlign: "right",
-                title: null
-            }
-        ];
-    };
-
-    /**
-     * Resolves data table actions.
-     *
-     * @return {TableActionsInterface[]}
-     */
-    const resolveTableActions = (): TableActionsInterface[] => {
-        if (!showListItemActions) {
-            return;
-        }
-
-        return [
-            {
-                icon: (): SemanticICONS => "pencil alternate",
-                onClick: (e: SyntheticEvent, role: RolesInterface): void =>
-                    handleRoleEdit(role?.id),
-                popupText: (): string => t("console:manage.features.roles.list.popups.edit",
-                    { type: "Role" }),
-                renderer: "semantic-icon"
-            },
-            {
-                hidden: (role: RolesInterface) => (role?.displayName === RoleConstants.ADMIN_ROLE ||
-                    role?.displayName === RoleConstants.ADMIN_GROUP),
-                icon: (): SemanticICONS => "trash alternate",
-                onClick: (e: SyntheticEvent, role: RolesInterface): void => {
-                    setCurrentDeletedRole(role);
-                    setShowDeleteConfirmationModal(!showRoleDeleteConfirmation);
+                dataIndex: "subscribe",
+                id: "subscribe",
+                key: "subscribe",
+                render: (role: any): ReactNode => {
+                    return <Button
+                            primary
+                            type="submit"
+                            size="large"
+                            className="form-button"
+                            onClick={ () => {
+                                subscribeForThisRole(role);
+                            } }
+                        >
+                            { role?.status === "assigned"? "Un Subscribe": "Subscribe" }
+                        </Button>
                 },
-                popupText: (): string => t("Delete Role",
-                    { type: "Role" }),
-                renderer: "semantic-icon"
+                title: t("console:manage.features.roles.list.columns.name")
             }
         ];
     };
 
     return (
         <>
-            <DataTable<RolesInterface>
-                className="roles-list"
-                externalSearch={ advancedSearch }
-                isLoading={ isLoading }
-                loadingStateOptions={ {
-                    count: defaultListItemLimit ?? UIConstants.DEFAULT_RESOURCE_LIST_ITEM_LIMIT,
-                    imageType: "square"
-                } }
-                actions={ resolveTableActions() }
-                columns={ resolveTableColumns() }
-                data={ roleList?.Resources }
-                onRowClick={
-                    (e: SyntheticEvent, role: RolesInterface): void => {
-                        handleRoleEdit(role?.id);
-                        // onListItemClick(e, role);
-                    }
-                }
-                placeholders={ showPlaceholders() }
-                selectable={ selection }
-                showHeader={ showHeader }
-                transparent={ !isLoading && (showPlaceholders() !== null) }
-                data-testid={ testId }
-            />
-            {
-                showRoleDeleteConfirmation &&
-                <ConfirmationModal
-                    data-testid={ `${ testId }-delete-item-confirmation-modal` }
-                    onClose={ (): void => setShowDeleteConfirmationModal(false) }
-                    type="warning"
-                    open={ showRoleDeleteConfirmation }
-                    assertion={ currentDeletedRole.displayName }
-                    assertionHint={
-                        (
-                            <p>
-                                <Trans
-                                    i18nKey={ "console:manage.features.roles.list.confirmations.deleteItem." +
-                                    "assertionHint" }
-                                    tOptions={ { roleName: currentDeletedRole.displayName } }
-                                >
-                                    Please type <strong>{ currentDeletedRole.displayName }</strong> to confirm.
-                                </Trans>
-                            </p>
-                        )
-                    }
-                    assertionType="input"
-                    primaryAction="Confirm"
-                    secondaryAction="Cancel"
-                    onSecondaryActionClick={ (): void => setShowDeleteConfirmationModal(false) }
-                    onPrimaryActionClick={ (): void => {
-                        handleRoleDelete(currentDeletedRole);
-                        setShowDeleteConfirmationModal(false);
+            {!isLoading? 
+                <DataTable<RolesInterface>
+                    className="roles-list"
+                    externalSearch={ advancedSearch }
+                    isLoading={ null }
+                    loadingStateOptions={ {
+                        count: defaultListItemLimit ?? UIConstants.DEFAULT_RESOURCE_LIST_ITEM_LIMIT,
+                        imageType: "square"
                     } }
-                    closeOnDimmerClick={ false }
-                >
-                    <ConfirmationModal.Header>
-                        { t("Are you sure?") }
-                    </ConfirmationModal.Header>
-                    <ConfirmationModal.Message attached warning>
-                        { t("This action is irreversible and will permanently delete the selected role",
-                            { type: "role" }) }
-                    </ConfirmationModal.Message>
-                    <ConfirmationModal.Content>
-                        { t("If you delete this role, the permissions attached to it will be deleted and the users attached to it will no longer be able to perform intended actions which were previously allowed. Please proceed with caution.",
-                            { type: "role" }) }
-                    </ConfirmationModal.Content>
-                </ConfirmationModal>
+                    actions={ null }
+                    columns={ resolveTableColumns() }
+                    data={ roleList?.Resources }
+                    onRowClick={ null }
+                    placeholders={ showPlaceholders() }
+                    selectable={ selection }
+                    showHeader={ showHeader }
+                    transparent={ !isLoading && (showPlaceholders() !== null) }
+                    data-testid={ testId }
+                />:
+                <ContentLoader className="p-3" active />
             }
         </>
     );

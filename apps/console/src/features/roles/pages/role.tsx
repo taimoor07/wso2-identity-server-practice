@@ -150,7 +150,7 @@ const RolesPage = (): ReactElement => {
     /**
      * The following function fetch the user store list and set it to the state.
      */
-    const getUserStores = () => {
+    const getUserStores = () => { 
         const storeOptions = [
             {
                 key: -2,
@@ -161,7 +161,7 @@ const RolesPage = (): ReactElement => {
                 key: -1,
                 text: "Primary",
                 value: "primary"
-            }
+            } 
         ];
         let storeOption = {
             key: null,

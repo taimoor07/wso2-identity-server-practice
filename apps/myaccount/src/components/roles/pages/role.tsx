@@ -16,20 +16,18 @@
  * under the License.
  */
 
-import { getRolesList, getUserStoreList } from "@wso2is/core/api";
+import { getUserStoreList } from "@wso2is/core/api";
 import { AlertInterface, AlertLevels, RoleListInterface, RolesInterface } from "@wso2is/core/models";
 import { addAlert } from "@wso2is/core/store";
-import { ListLayout, PageLayout, PrimaryButton } from "@wso2is/react-components";
+import { ListLayout, PageLayout } from "@wso2is/react-components";
 import _ from "lodash";
 import React, { ReactElement, SyntheticEvent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { Dropdown, DropdownItemProps, DropdownProps, Icon, PaginationProps } from "semantic-ui-react";
-// import { AdvancedSearchWithBasicFilters, UIConstants } from "../../core";
-import { AdvancedSearchWithBasicFilters } from "../components/helpers/advanced-search-with-basic-filters";
+import { DropdownItemProps, DropdownProps, PaginationProps } from "semantic-ui-react";
+import { deleteRoleById, getRolesForUser, searchRoleList, subscribeForRole } from "../api";
 import { CreateRoleWizard, RoleList } from "../components";
-// import { CreateRoleWizard, RoleList } from "../../roles";
-import { deleteRoleById, searchRoleList } from "../api";
+import { AdvancedSearchWithBasicFilters } from "../components/helpers/advanced-search-with-basic-filters";
 import { APPLICATION_DOMAIN, INTERNAL_DOMAIN } from "../constants";
 import { SearchRoleInterface } from "../models";
 
@@ -78,7 +76,6 @@ const RolesPage = (): ReactElement => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
 
-    // const [ listItemLimit, setListItemLimit ] = useState<number>(UIConstants.DEFAULT_RESOURCE_LIST_ITEM_LIMIT);
     const [ listItemLimit, setListItemLimit ] = useState<number>(10);
     const [ listOffset, setListOffset ] = useState<number>(0);
     const [ showWizard, setShowWizard ] = useState<boolean>(false);
@@ -92,11 +89,10 @@ const RolesPage = (): ReactElement => {
     const [ isEmptyResults, setIsEmptyResults ] = useState<boolean>(false);
     const [ isRoleListFetchRequestLoading, setRoleListFetchRequestLoading ] = useState<boolean>(false);
     const [ triggerClearQuery, setTriggerClearQuery ] = useState<boolean>(false);
-
     const [ initialRolList, setInitialRoleList ] = useState<RoleListInterface>();
     const [ paginatedRoles, setPaginatedRoles ] = useState<RoleListInterface>();
-
     const [ listSortingStrategy, setListSortingStrategy ] = useState<DropdownItemProps>(ROLES_SORTING_OPTIONS[ 0 ]);
+    const [ isLoading, setIsLoading ] = useState<boolean>(false);
 
     useEffect(() => {
         if (searchQuery == "") {
@@ -124,10 +120,11 @@ const RolesPage = (): ReactElement => {
     const getRoles = () => {
         setRoleListFetchRequestLoading(true);
 
-        getRolesList(userStore)
+        getRolesForUser()
             .then((response) => {
+                const data = formateData(response.data);
                 if (response.status === 200) {
-                    const roleResources = response.data.Resources;
+                    const roleResources = data.Resources;
 
                     if (roleResources && roleResources instanceof Array) {
                         const updatedResources = roleResources.filter((role: RolesInterface) => {
@@ -139,15 +136,53 @@ const RolesPage = (): ReactElement => {
                                 return !role.displayName.includes(APPLICATION_DOMAIN);
                             }
                         });
-                        response.data.Resources = updatedResources;
-                        setInitialRoleList(response.data);
-                        setRolesPage(0, listItemLimit, response.data);
+
+                        data.Resources = updatedResources;
+                        setInitialRoleList(data);
+                        setRolesPage(0, listItemLimit, data);
                     }
                 }
             })
             .finally(() => {
                 setRoleListFetchRequestLoading(false);
             });
+    };
+
+    const formateData = (responseRoles) => {
+        const roles = [];
+        
+        responseRoles.assigned.map(role=>{
+            roles.push({displayName: role, status: "assigned"})
+        });
+        responseRoles.unassigned.map(role=>{
+            roles.push({displayName: role, status: "unassigned"})
+        });          
+
+        const data = {
+            Resources: roles,
+            itemsPerPage: roles.length,
+            startIndex: 1,
+            totalResults: roles.length,
+            schemas: "urn:ietf:params:scim:api:messages:2.0:ListResponse"
+        };
+
+        return data;
+    }    
+
+    const subscribeForThisRole = (role) => {
+        setIsLoading(true);
+        const roleData = {
+            "op": role.status === "assigned"? "remove": "add",
+            "value": role.displayName
+        }
+
+        subscribeForRole(roleData).then((response) => {
+           setIsLoading(false);
+            getRoles();
+        }).catch((error) => {
+            setIsLoading(false);
+            getRoles();
+        });
     };
 
     /**
@@ -320,27 +355,9 @@ const RolesPage = (): ReactElement => {
 
     return (
         <PageLayout
-            action={
-                (isRoleListFetchRequestLoading || !(!searchQuery && paginatedRoles?.Resources?.length <= 0))
-                && (
-                    <PrimaryButton
-                        data-testid="role-mgt-roles-list-add-button"
-                        onClick={ () => setShowWizard(true) }
-                    >
-                        <Icon
-                            data-testid="role-mgt-roles-list-add-button-icon"
-                            name="add"
-                        />
-                        { t("New Role", { type: "Role" }) }
-                        {/* { t("console:manage.features.roles.list.buttons.addButton", { type: "Role" }) } */}
-                    </PrimaryButton>
-                )
-            }
-            title={ t("Roles") }
-            description={ t("Create and manage roles, assign permissions for roles.") }
-            // title={ t("console:manage.pages.roles.title") }
-            // description={ t("console:manage.pages.roles.subTitle") }
-       >
+            title="Roles"
+            description="Subscribe and unsubscribe for roles."
+        >
             {
                 !isEmptyResults &&
                 <ListLayout
@@ -367,8 +384,7 @@ const RolesPage = (): ReactElement => {
                                 t("console:manage.features.roles.advancedSearch.form.inputs.filterValue" +
                                     ".placeholder")
                             }
-                            placeholder={ t("Search by role name") }
-                            // placeholder={ t("console:manage.features.roles.advancedSearch.placeholder") }
+                            placeholder="Search by role name"
                             defaultSearchAttribute="displayName"
                             defaultSearchOperator="co"
                             triggerClearQuery={ triggerClearQuery }
@@ -380,24 +396,13 @@ const RolesPage = (): ReactElement => {
                     onPageChange={ handlePaginationChange }
                     onSortStrategyChange={ handleListSortingStrategyOnChange }
                     sortStrategy={ listSortingStrategy }
-                    rightActionPanel={
-                        (
-                            <Dropdown
-                                data-testid="role-mgt-roles-list-filters-dropdown"
-                                selection
-                                options={ filterOptions }
-                                placeholder= { t("Filter by") }
-                                // placeholder= { t("console:manage.features.roles.list.buttons.filterDropdown") }
-                                onChange={ handleFilterChange }
-                            />
-                        )
-                    }
+                    rightActionPanel={null}
                     showPagination={ paginatedRoles?.Resources?.length > 0 }
                     showTopActionPanel={
                         isRoleListFetchRequestLoading || !(!searchQuery && paginatedRoles?.Resources?.length <= 0)
                     }
                     totalPages={ Math.ceil(initialRolList?.Resources?.length / listItemLimit) }
-                    // totalListSize={ initialRolList?.Resources?.length }
+                    totalListSize={ initialRolList?.Resources?.length }
                 >
                     <RoleList
                         advancedSearch={ (
@@ -432,7 +437,8 @@ const RolesPage = (): ReactElement => {
                         data-testid="role-mgt-roles-list"
                         handleRoleDelete={ handleOnDelete }
                         isGroup={ false }
-                        isLoading={ isRoleListFetchRequestLoading }
+                        isLoading={ isLoading }
+                        subscribeForThisRole={ (role) => subscribeForThisRole(role)}
                         onEmptyListPlaceholderActionClick={ () => setShowWizard(true) }
                         onSearchQueryClear={ handleSearchQueryClear }
                         roleList={ paginatedRoles }

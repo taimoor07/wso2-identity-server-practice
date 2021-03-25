@@ -105,7 +105,7 @@ export const AddRoleUsers: FunctionComponent<AddRoleUserProps> = (props: AddRole
     const [ subBtnLable, setSubBtnLable ] = useState(unSubscribeMeLable);
     
     useEffect(() => {
-        let fountIndex = tempUserList.findIndex(user => user.id == profileInfo.id);
+        const fountIndex = tempUserList.findIndex(user => user.id == profileInfo.id);
         if(fountIndex !== -1) {
             setAlreadySub(true);
             setSubBtnLable(unSubscribeMeLable);
@@ -122,7 +122,7 @@ export const AddRoleUsers: FunctionComponent<AddRoleUserProps> = (props: AddRole
             handleTempUsersListChange && handleTempUsersListChange(tempUserList);
         }
 
-        let fountIndex = tempUserList.findIndex(user => user.id == profileInfo.id);
+        const fountIndex = tempUserList.findIndex(user => user.id == profileInfo.id);
         if(fountIndex !== -1) {
             setAlreadySub(true);
             setSubBtnLable(unSubscribeMeLable);
@@ -370,7 +370,7 @@ export const AddRoleUsers: FunctionComponent<AddRoleUserProps> = (props: AddRole
 
     const [currentUser, setCurrentUser ] = useState(null);
     useEffect(()=>{
-        let subCurrUser = {
+        const subCurrUser = {
             emails: profileInfo.emails,
             id: profileInfo.id,
             meta: profileInfo.meta,
@@ -381,7 +381,7 @@ export const AddRoleUsers: FunctionComponent<AddRoleUserProps> = (props: AddRole
     }, [profileInfo])
 
     const handleAddUserSubmit = () => {
-        let fountIndex = tempUserList.findIndex(user => user.id == currentUser.id);
+        const fountIndex = tempUserList.findIndex(user => user.id == currentUser.id);
         alreadySub? tempUserList.splice(fountIndex, 1): tempUserList.push(currentUser); 
 
         onSubmit(tempUserList);
@@ -512,25 +512,8 @@ export const AddRoleUsers: FunctionComponent<AddRoleUserProps> = (props: AddRole
 
     return (
         <>
-            <Grid>
-                <Grid.Row>
-                    <Grid.Column>
-                        <Button
-                            primary
-                            type="submit"
-                            size="large"
-                            className="form-button"
-                            onClick={ () => {
-                                handleAddUserSubmit();
-                            } }
-                        >
-                            { subBtnLable}
-                        </Button>
-                    </Grid.Column>
-                </Grid.Row>
-            </Grid>
 
-            {/* { isEdit ?
+            { isEdit ?
                 <Grid>
                     <Grid.Row>
                         <Grid.Column computer={ 8 }>
@@ -726,7 +709,7 @@ export const AddRoleUsers: FunctionComponent<AddRoleUserProps> = (props: AddRole
                         }
                     </Grid>
                 </Forms>
-            } */}
+            }
         </>
     );
 };

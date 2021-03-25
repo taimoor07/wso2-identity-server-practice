@@ -78,6 +78,45 @@ export const updateRoleDetails = (roleId: string, roleData: PatchRoleDataInterfa
         });
 };
 
+// get all assigned and unassigned roles for current user
+export const getRolesForUser = (): Promise<any> => {
+    const requestConfig = {
+        headers: {
+            "Access-Control-Allow-Origin": store.getState().config.deployment.clientHost,
+            "Content-Type": "application/json"
+        },
+        method: HttpMethods.GET,
+        url: "https://localhost:9443/telenorpkstn/rest/v1/me/groups"
+    };
+
+    return httpClient(requestConfig)
+        .then((response) => {
+            return Promise.resolve(response);
+        }).catch((error) => {
+            return Promise.reject(error);
+        });
+};
+
+// self assignment -- subscribe current user for role
+export const subscribeForRole = (roleData): Promise<any> => {
+    const requestConfig = {
+        data: roleData,
+        headers: {
+            "Access-Control-Allow-Origin": store.getState().config.deployment.clientHost,
+            "Content-Type": "application/json"
+        },
+        method: HttpMethods.PATCH,
+        url: "https://localhost:9443/telenorpkstn/rest/v1/me/groups"
+    };
+
+    return httpClient(requestConfig)
+        .then((response) => {
+            return Promise.resolve(response);
+        }).catch((error) => {
+            return Promise.reject(error);
+        });
+};
+
 /**
  * Retrieve a list of matched roles according to the search query.
  *
