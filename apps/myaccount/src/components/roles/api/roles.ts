@@ -18,7 +18,6 @@
 
 import { IdentityClient } from "@wso2/identity-oidc-js";
 import { HttpMethods } from "@wso2is/core/models";
-// import { store } from "../../core";
 import { store } from "../../../store";
 import { CreateRoleInterface, PatchRoleDataInterface, SearchRoleInterface } from "../models";
 
@@ -28,6 +27,102 @@ import { CreateRoleInterface, PatchRoleDataInterface, SearchRoleInterface } from
 const httpClient = IdentityClient.getInstance()
     .httpRequest.bind(IdentityClient.getInstance())
     .bind(IdentityClient.getInstance());
+
+
+// get assigned and unassigned roles for user
+export const getRolesForUser = (): Promise<any> => {
+    const requestConfig = {
+        headers: {
+            "Access-Control-Allow-Origin": store.getState().config.deployment.clientHost,
+            "Content-Type": "application/json"
+        },
+        method: HttpMethods.GET,
+        url: store.getState().config.endpoints.groups + "?filter=displayName+sw+APP_"
+    };
+
+    return httpClient(requestConfig)
+        .then((response) => {
+            return Promise.resolve(response);
+        }).catch((error) => {
+            return Promise.reject(error);
+        });
+};
+// self assignment -- subscribe current user for role
+export const subscribeUserForRole = (roleId, roleData): Promise<any> => {
+    const requestConfig = {
+        data: roleData,
+        headers: {
+            "Access-Control-Allow-Origin": store.getState().config.deployment.clientHost,
+            "Content-Type": "application/scim+json"
+        },
+        method: HttpMethods.PATCH,
+        url: store.getState().config.endpoints.updateCustomGroups + "/" + roleId
+    };
+
+    return httpClient(requestConfig)
+        .then((response) => {
+            return Promise.resolve(response);
+        }).catch((error) => {
+            return Promise.reject(error);
+    });
+};
+
+// old api
+// export const getAssignedRolesForUser = (): Promise<any> => {
+//     const requestConfig = {
+//         headers: {
+//             "Access-Control-Allow-Origin": store.getState().config.deployment.clientHost,
+//             "Content-Type": "application/json"
+//         },
+//         method: HttpMethods.GET,
+//         url: store.getState().config.endpoints.customAssignedRoles
+//     };
+
+//     return httpClient(requestConfig)
+//         .then((response) => {
+//             return Promise.resolve(response);
+//         }).catch((error) => {
+//             return Promise.reject(error);
+//         });
+// };
+// old api
+// export const getUnassignedRolesForUser = (): Promise<any> => {
+//     const requestConfig = {
+//         headers: {
+//             "Access-Control-Allow-Origin": store.getState().config.deployment.clientHost,
+//             "Content-Type": "application/json"
+//         },
+//         method: HttpMethods.GET,
+//         url: store.getState().config.endpoints.customRoles + "?filter=displayName+sw+APP_&startIndex=0&count=10"
+//     };
+
+//     return httpClient(requestConfig)
+//         .then((response) => {
+//             return Promise.resolve(response);
+//         }).catch((error) => {
+//             return Promise.reject(error);
+//         });
+// };
+
+// old api - self assignment -- subscribe current user for role
+// export const subscribeForRole_Old = (roleId, roleData): Promise<any> => {
+//     const requestConfig = {
+//         data: roleData,
+//         headers: {
+//             "Access-Control-Allow-Origin": store.getState().config.deployment.clientHost,
+//             "Content-Type": "application/json"
+//         },
+//         method: HttpMethods.PATCH,
+//         url: store.getState().config.endpoints.customRoles + "/" + roleId
+//     };
+
+//     return httpClient(requestConfig)
+//         .then((response) => {
+//             return Promise.resolve(response);
+//         }).catch((error) => {
+//             return Promise.reject(error);
+//         });
+// };
 
 /**
  * Retrieve Role details for a give role id.
@@ -68,62 +163,6 @@ export const updateRoleDetails = (roleId: string, roleData: PatchRoleDataInterfa
         },
         method: HttpMethods.PATCH,
         url: store.getState().config.endpoints.roles + "/" + roleId
-    };
-
-    return httpClient(requestConfig)
-        .then((response) => {
-            return Promise.resolve(response);
-        }).catch((error) => {
-            return Promise.reject(error);
-        });
-};
-
-// get assigned and unassigned roles for user
-export const getAssignedRolesForUser = (): Promise<any> => {
-    const requestConfig = {
-        headers: {
-            "Access-Control-Allow-Origin": store.getState().config.deployment.clientHost,
-            "Content-Type": "application/json"
-        },
-        method: HttpMethods.GET,
-        url: store.getState().config.endpoints.customAssignedRoles
-    };
-
-    return httpClient(requestConfig)
-        .then((response) => {
-            return Promise.resolve(response);
-        }).catch((error) => {
-            return Promise.reject(error);
-        });
-};
-export const getUnassignedRolesForUser = (): Promise<any> => {
-    const requestConfig = {
-        headers: {
-            "Access-Control-Allow-Origin": store.getState().config.deployment.clientHost,
-            "Content-Type": "application/json"
-        },
-        method: HttpMethods.GET,
-        url: store.getState().config.endpoints.customRoles + "?filter=displayName+sw+APP_&startIndex=0&count=10"
-    };
-
-    return httpClient(requestConfig)
-        .then((response) => {
-            return Promise.resolve(response);
-        }).catch((error) => {
-            return Promise.reject(error);
-        });
-};
-
-// self assignment -- subscribe current user for role
-export const subscribeForRole = (roleId, roleData): Promise<any> => {
-    const requestConfig = {
-        data: roleData,
-        headers: {
-            "Access-Control-Allow-Origin": store.getState().config.deployment.clientHost,
-            "Content-Type": "application/json"
-        },
-        method: HttpMethods.PATCH,
-        url: store.getState().config.endpoints.customRoles + "/" + roleId
     };
 
     return httpClient(requestConfig)

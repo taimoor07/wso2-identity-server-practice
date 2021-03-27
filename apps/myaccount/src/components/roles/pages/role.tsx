@@ -25,7 +25,7 @@ import React, { ReactElement, SyntheticEvent, useEffect, useState } from "react"
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { DropdownItemProps, DropdownProps, PaginationProps } from "semantic-ui-react";
-import { deleteRoleById, getAssignedRolesForUser, getUnassignedRolesForUser, searchRoleList, subscribeForRole } from "../api";
+import { deleteRoleById, getRolesForUser, subscribeUserForRole, searchRoleList } from "../api";
 import { CreateRoleWizard, RoleList } from "../components";
 import { AdvancedSearchWithBasicFilters } from "../components/helpers/advanced-search-with-basic-filters";
 import { APPLICATION_DOMAIN, INTERNAL_DOMAIN } from "../constants";
@@ -50,23 +50,23 @@ const ROLES_SORTING_OPTIONS: DropdownItemProps[] = [
     }
 ];
 
-const filterOptions: DropdownItemProps[] = [
-    {
-        key: "all",
-        text: "Show All",
-        value: "all"
-    },
-    {
-        key: APPLICATION_DOMAIN,
-        text: "Application Domain",
-        value: APPLICATION_DOMAIN
-    },
-    {
-        key: INTERNAL_DOMAIN,
-        text: "Internal Domain",
-        value: INTERNAL_DOMAIN
-    }
-];
+// const filterOptions: DropdownItemProps[] = [
+//     {
+//         key: "all",
+//         text: "Show All",
+//         value: "all"
+//     },
+//     {
+//         key: APPLICATION_DOMAIN,
+//         text: "Application Domain",
+//         value: APPLICATION_DOMAIN
+//     },
+//     {
+//         key: INTERNAL_DOMAIN,
+//         text: "Internal Domain",
+//         value: INTERNAL_DOMAIN
+//     }
+// ];
 
 /**
  * React component to list User Roles.
@@ -77,14 +77,14 @@ const RolesPage = (): ReactElement => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     
-    const currentUserId = useSelector((state: AppState) => state.authenticationInformation.profileInfo.id);
+    const currentUser = useSelector((state: AppState) => state.authenticationInformation.profileInfo);
     const [ listItemLimit, setListItemLimit ] = useState<number>(10);
     const [ listOffset, setListOffset ] = useState<number>(0);
     const [ showWizard, setShowWizard ] = useState<boolean>(false);
     const [ isListUpdated, setListUpdated ] = useState(false);
     // TODO: Check the usage and delete if not required.
-    const [ userStoreOptions, setUserStoresList ] = useState([]);
-    const [ userStore, setUserStore ] = useState(undefined);
+    // const [ userStoreOptions, setUserStoresList ] = useState([]);
+    // const [ userStore, setUserStore ] = useState(undefined);
     const [ filterBy, setFilterBy ] = useState<string>("all");
     const [ searchQuery, setSearchQuery ] = useState<string>("");
     // TODO: Check the usage and delete if not required.
@@ -108,28 +108,18 @@ const RolesPage = (): ReactElement => {
     }, [ isListUpdated ]);
 
     useEffect(() => {
-        getUserStores();
-    }, []);
+        if(currentUser.id) getRoles();
+    }, [ currentUser ]);
 
-    useEffect(() => {
-        getRoles();
-    }, [ filterBy ]);
-
-    useEffect(() => {
-        getRoles();
-    }, [ userStore ]);
 
     const getRoles = () => {
         setRoleListFetchRequestLoading(true);
 
-        // get assigned and unassigned roles for this user
-        const assignedRolse = getAssignedRolesForUser();
-        const unAssignedRolse = getUnassignedRolesForUser();
-        Promise.all([assignedRolse, unAssignedRolse])
-            .then((values) => {
-                const data = formateData(values[0].data.roles, values[1].data.Resources);
-                if (values.length >= 2) {
-                    const roleResources = data.Resources;
+    if(currentUser.id)
+        getRolesForUser()
+            .then((response) => {
+                if (response.status === 200) {
+                    const roleResources = formateData(currentUser.id, response.data.Resources);
 
                     if (roleResources && roleResources instanceof Array) {
                         const updatedResources = roleResources.filter((role: RolesInterface) => {
@@ -141,110 +131,232 @@ const RolesPage = (): ReactElement => {
                                 return !role.displayName.includes(APPLICATION_DOMAIN);
                             }
                         });
-
-                        data.Resources = updatedResources;
-                        setInitialRoleList(data);
-                        setRolesPage(0, listItemLimit, data);
+                        response.data.Resources = updatedResources;
+                        setInitialRoleList(response.data);
+                        setRolesPage(0, listItemLimit, response.data);
                     }
                 }
-            })
-            .catch(error => {
-                console.log("🚀 ~ file: role.tsx ~ line 150 ~ getRoles ~ error", error)
             })
             .finally(() => {
                 setRoleListFetchRequestLoading(false);
             });
     };
 
-    const formateData = (assignedRoles, unAssignedRoles) => {
-        const roles = [];
-        
-        assignedRoles.shift();
-        assignedRoles.map(role=>{
-            roles.push({id: role.value, displayName: role.display, status: "assigned"})
-        });
+    const subscribeForThisRole2 = (role) => {
+        setIsLoading(true);
 
-        unAssignedRoles.map(role=>{
-            const found = roles.some(thisRole=> thisRole.displayName === role.displayName);
-            if(!found) roles.push({id: role.id, displayName: role.displayName, status: "unassigned"})
-        });
-          
-        const data = {
-            Resources: roles,
-            itemsPerPage: roles.length,
-            startIndex: 1,
-            totalResults: roles.length,
-            schemas: "urn:ietf:params:scim:api:messages:2.0:ListResponse"
-        };
+        console.log("currentUser", currentUser)
 
-        return data;
-    }    
+        const roleData = {
+            "Operations": [{
+                "op": "remove",
+                // "op": role.status === "assigned"? "remove": "add",
+                "value": {
+                    "members": [{
+                        "display": "TPIAM.COM.PK/tpusr2",
+                        "value": currentUser.id
+                    }]
+                }}
+            ],
+            "schemas": [
+                "urn:ietf:params:scim:api:messages:2.0:PatchOp"
+            ]
+        }
 
+        // updateUserForRole(role.id, roleData)
+        //     .then((response) => {
+        //         console.log("🚀 ~ file: role.tsx ~ line 176 ~ .then ~ response", response)
+        //         setIsLoading(false);
+        //         getRoles();
+        //     }).catch((error) => {
+        //         setIsLoading(false);
+        //         getRoles();
+        // });
+    };
     const subscribeForThisRole = (role) => {
         setIsLoading(true);
 
-        const roleData = {
-            "Operations":[{
-                "op": role.status === "assigned"? "remove": "add",
-                "path":"users",
-                "value":[{
-                    "value": currentUserId
-                }]
-            }],
-            "schemas":["urn:ietf:params:scim:api:messages:2.0:PatchOp"]
-        };
+        let operations = {};
+        if(role.status === "assigned") {
+            operations = {
+                "op": "remove",
+                "path": `members[value eq \"${currentUser.id}"\]`,
+            }
+        } else {
+            operations = {
+                "op": "add",
+                "value": {
+                    "members": [{
+                        "display": currentUser.userName,
+                        "value": currentUser.id
+                    }]
+                }
+            }
+        }
 
-        subscribeForRole(role.id, roleData)
+        console.log("🚀 ~ file: role.tsx ~ line 203 ~ subscribeForThisRole ~ operations", operations)
+        const roleData = {
+            "Operations": [operations],
+            "schemas": [
+                "urn:ietf:params:scim:api:messages:2.0:PatchOp"
+            ]
+        }
+        console.log("🚀 ~ file: role.tsx ~ line 204 ~ subscribeForThisRole ~ roleData", roleData)
+
+        subscribeUserForRole(role.id, roleData)
             .then((response) => {
-                console.log("🚀 ~ file: role.tsx ~ line 189 ~ .then ~ response", response)
+                console.log("🚀 ~ file: role.tsx ~ line 176 ~ .then ~ response", response)
                 setIsLoading(false);
                 getRoles();
             }).catch((error) => {
+                console.log("🚀 ~ file: role.tsx ~ line 202 ~ .then ~ error", error)
                 setIsLoading(false);
                 getRoles();
-            });
+        });
     };
+
+    const formateData = (currentUserId, returnedRoles) => {
+        const roles = [];
+
+        returnedRoles.map(role=>{
+            if(role.members && role.members.length>0) {
+                const found = role.members.some(thisMember=> thisMember.value === currentUserId);
+                if(!found) roles.push({id: role.id, displayName: role.displayName, status: "unassigned"})
+                else roles.push({id: role.id, displayName: role.displayName, status: "assigned"})
+            } else {
+                roles.push({id: role.id, displayName: role.displayName, status: "unassigned"})
+            }
+        });
+
+        return roles;
+    } 
+
+    // const getRolesOld = () => {
+    //     setRoleListFetchRequestLoading(true);
+
+    //     // get assigned and unassigned roles for this user
+    //     const assignedRolse = getAssignedRolesForUser();
+    //     const unAssignedRolse = getUnassignedRolesForUser();
+    //     Promise.all([assignedRolse, unAssignedRolse])
+    //         .then((values) => {
+    //             const data = formateData(values[0].data.roles, values[1].data.Resources);
+    //             if (values.length >= 2) {
+    //                 const roleResources = data.Resources;
+
+    //                 if (roleResources && roleResources instanceof Array) {
+    //                     const updatedResources = roleResources.filter((role: RolesInterface) => {
+    //                         if (filterBy === "all") {
+    //                             return role.displayName;
+    //                         } else if (APPLICATION_DOMAIN === filterBy) {
+    //                             return role.displayName.includes(APPLICATION_DOMAIN);
+    //                         } else if (INTERNAL_DOMAIN === filterBy) {
+    //                             return !role.displayName.includes(APPLICATION_DOMAIN);
+    //                         }
+    //                     });
+
+    //                     data.Resources = updatedResources;
+    //                     setInitialRoleList(data);
+    //                     setRolesPage(0, listItemLimit, data);
+    //                 }
+    //             }
+    //         })
+    //         .catch(error => {
+    //             console.log("🚀 ~ file: role.tsx ~ line 150 ~ getRoles ~ error", error)
+    //         })
+    //         .finally(() => {
+    //             setRoleListFetchRequestLoading(false);
+    //         });
+    // };
+
+    // const formateData = (assignedRoles, unAssignedRoles) => {
+    //     const roles = [];
+        
+    //     assignedRoles.shift();
+    //     assignedRoles.map(role=>{
+    //         roles.push({id: role.value, displayName: role.display, status: "assigned"})
+    //     });
+
+    //     unAssignedRoles.map(role=>{
+    //         const found = roles.some(thisRole=> thisRole.displayName === role.displayName);
+    //         if(!found) roles.push({id: role.id, displayName: role.displayName, status: "unassigned"})
+    //     });
+          
+    //     const data = {
+    //         Resources: roles,
+    //         itemsPerPage: roles.length,
+    //         startIndex: 1,
+    //         totalResults: roles.length,
+    //         schemas: "urn:ietf:params:scim:api:messages:2.0:ListResponse"
+    //     };
+
+    //     return data;
+    // }    
+
+    // const subscribeForThisRole_Old = (role) => {
+    //     setIsLoading(true);
+
+    //     const roleData = {
+    //         "Operations":[{
+    //             "op": role.status === "assigned"? "remove": "add",
+    //             "path":"users",
+    //             "value":[{
+    //                 "value": currentUser.id
+    //             }]
+    //         }],
+    //         "schemas":["urn:ietf:params:scim:api:messages:2.0:PatchOp"]
+    //     };
+
+    //     subscribeForRole(role.id, roleData)
+    //         .then((response) => {
+    //             console.log("🚀 ~ file: role.tsx ~ line 189 ~ .then ~ response", response)
+    //             setIsLoading(false);
+    //             getRoles();
+    //         }).catch((error) => {
+    //             setIsLoading(false);
+    //             getRoles();
+    //         });
+    // };
 
     /**
      * The following function fetch the user store list and set it to the state.
      */
-    const getUserStores = () => {
-        const storeOptions = [
-            {
-                key: -2,
-                text: "All user stores",
-                value: null
-            },
-            {
-                key: -1,
-                text: "Primary",
-                value: "primary"
-            }
-        ];
-        let storeOption = {
-            key: null,
-            text: "",
-            value: ""
-        };
-        getUserStoreList()
-            .then((response) => {
-                if (storeOptions === []) {
-                    storeOptions.push(storeOption);
-                }
-                response.data.map((store, index) => {
-                        storeOption = {
-                            key: index,
-                            text: store.name,
-                            value: store.name
-                        };
-                        storeOptions.push(storeOption);
-                    }
-                );
-                setUserStoresList(storeOptions);
-            });
+    // const getUserStores = () => {
+    //     const storeOptions = [
+    //         {
+    //             key: -2,
+    //             text: "All user stores",
+    //             value: null
+    //         },
+    //         {
+    //             key: -1,
+    //             text: "Primary",
+    //             value: "primary"
+    //         }
+    //     ];
+    //     let storeOption = {
+    //         key: null,
+    //         text: "",
+    //         value: ""
+    //     };
+    //     getUserStoreList()
+    //         .then((response) => {
+    //             if (storeOptions === []) {
+    //                 storeOptions.push(storeOption);
+    //             }
+    //             response.data.map((store, index) => {
+    //                     storeOption = {
+    //                         key: index,
+    //                         text: store.name,
+    //                         value: store.name
+    //                     };
+    //                     storeOptions.push(storeOption);
+    //                 }
+    //             );
+    //             setUserStoresList(storeOptions);
+    //         });
 
-        setUserStoresList(storeOptions);
-    };
+    //     setUserStoresList(storeOptions);
+    // };
 
     /**
      * Sets the list sorting strategy.

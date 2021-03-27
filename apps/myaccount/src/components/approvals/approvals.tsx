@@ -456,7 +456,7 @@ export const Approvals: FunctionComponent<ApprovalsProps> = (
             placeholder={
                 !(approvals && (approvals.length > 0))
                     ? t(
-                        "views:sections.approvals.placeholders.emptyApprovalList.heading",
+                        "You don't have any {{status}} pending approvals",
                         { status: filterStatus !== ApprovalStatus.ALL ? filterStatus.toLocaleLowerCase() : "" }
                     )
                     : null
