@@ -16,7 +16,6 @@
  * under the License.
  */
 
-import { getUserStoreList } from "@wso2is/core/api";
 import { AlertInterface, AlertLevels, RoleListInterface, RolesInterface } from "@wso2is/core/models";
 import { addAlert } from "@wso2is/core/store";
 import { ListLayout, PageLayout } from "@wso2is/react-components";
@@ -25,12 +24,12 @@ import React, { ReactElement, SyntheticEvent, useEffect, useState } from "react"
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { DropdownItemProps, DropdownProps, PaginationProps } from "semantic-ui-react";
-import { deleteRoleById, getRolesForUser, subscribeUserForRole, searchRoleList } from "../api";
+import { AppState } from "../../../store";
+import { deleteRoleById, getCurrentUser, getRolesForUser, searchRoleList, subscribeUserForRole } from "../api";
 import { CreateRoleWizard, RoleList } from "../components";
 import { AdvancedSearchWithBasicFilters } from "../components/helpers/advanced-search-with-basic-filters";
 import { APPLICATION_DOMAIN, INTERNAL_DOMAIN } from "../constants";
 import { SearchRoleInterface } from "../models";
-import { AppState } from "../../../store";
 
 const ROLES_SORTING_OPTIONS: DropdownItemProps[] = [
     {
@@ -111,68 +110,50 @@ const RolesPage = (): ReactElement => {
         if(currentUser.id) getRoles();
     }, [ currentUser ]);
 
-
     const getRoles = () => {
         setRoleListFetchRequestLoading(true);
 
-    if(currentUser.id)
-        getRolesForUser()
-            .then((response) => {
-                if (response.status === 200) {
-                    const roleResources = formateData(currentUser.id, response.data.Resources);
+        const currentUser = getCurrentUser();
+        const userRoles = getRolesForUser();
+        Promise.all([currentUser, userRoles])
+            .then((values) => {
+                console.log("🚀 ~ file: role.tsx ~ line 129 ~ .then ~ values", values)
+                 const roleResources = formateData(values[0].data, values[1].data.Resources);
+                 let response = values[1];   
 
-                    if (roleResources && roleResources instanceof Array) {
-                        const updatedResources = roleResources.filter((role: RolesInterface) => {
-                            if (filterBy === "all") {
-                                return role.displayName;
-                            } else if (APPLICATION_DOMAIN === filterBy) {
-                                return role.displayName.includes(APPLICATION_DOMAIN);
-                            } else if (INTERNAL_DOMAIN === filterBy) {
-                                return !role.displayName.includes(APPLICATION_DOMAIN);
-                            }
-                        });
-                        response.data.Resources = updatedResources;
-                        setInitialRoleList(response.data);
-                        setRolesPage(0, listItemLimit, response.data);
-                    }
+                if (roleResources && roleResources instanceof Array) {
+                    const updatedResources = roleResources.filter((role: RolesInterface) => {
+                        if (filterBy === "all") {
+                            return role.displayName;
+                        } else if (APPLICATION_DOMAIN === filterBy) {
+                            return role.displayName.includes(APPLICATION_DOMAIN);
+                        } else if (INTERNAL_DOMAIN === filterBy) {
+                            return !role.displayName.includes(APPLICATION_DOMAIN);
+                        }
+                    });
+                    response.data.Resources = updatedResources;
+                    setInitialRoleList(response.data);
+                    setRolesPage(0, listItemLimit, response.data);
                 }
-            })
-            .finally(() => {
+            }).catch(error=>{
+                console.log("🚀 Error while fetching current user and his roles", error)
+            }).finally(() => {
                 setRoleListFetchRequestLoading(false);
             });
     };
 
-    const subscribeForThisRole2 = (role) => {
-        setIsLoading(true);
+    const formateData = (currentUser, returnedRoles) => {
+        const roles = [];
 
-        console.log("currentUser", currentUser)
+        returnedRoles.map(role=>{
+            const found = currentUser.groups.some(groupRole=> groupRole.value === role.id);
+            if(!found) roles.push({id: role.id, displayName: role.displayName, status: "unassigned"})
+            else roles.push({id: role.id, displayName: role.displayName, status: "assigned"})
+        });
 
-        const roleData = {
-            "Operations": [{
-                "op": "remove",
-                // "op": role.status === "assigned"? "remove": "add",
-                "value": {
-                    "members": [{
-                        "display": "TPIAM.COM.PK/tpusr2",
-                        "value": currentUser.id
-                    }]
-                }}
-            ],
-            "schemas": [
-                "urn:ietf:params:scim:api:messages:2.0:PatchOp"
-            ]
-        }
+        return roles;
+    } 
 
-        // updateUserForRole(role.id, roleData)
-        //     .then((response) => {
-        //         console.log("🚀 ~ file: role.tsx ~ line 176 ~ .then ~ response", response)
-        //         setIsLoading(false);
-        //         getRoles();
-        //     }).catch((error) => {
-        //         setIsLoading(false);
-        //         getRoles();
-        // });
-    };
     const subscribeForThisRole = (role) => {
         setIsLoading(true);
 
@@ -180,7 +161,7 @@ const RolesPage = (): ReactElement => {
         if(role.status === "assigned") {
             operations = {
                 "op": "remove",
-                "path": `members[value eq \"${currentUser.id}"\]`,
+                "path": `members[value eq ${currentUser.id}]`,
             }
         } else {
             operations = {
@@ -194,42 +175,54 @@ const RolesPage = (): ReactElement => {
             }
         }
 
-        console.log("🚀 ~ file: role.tsx ~ line 203 ~ subscribeForThisRole ~ operations", operations)
         const roleData = {
             "Operations": [operations],
             "schemas": [
                 "urn:ietf:params:scim:api:messages:2.0:PatchOp"
             ]
         }
-        console.log("🚀 ~ file: role.tsx ~ line 204 ~ subscribeForThisRole ~ roleData", roleData)
 
         subscribeUserForRole(role.id, roleData)
             .then((response) => {
-                console.log("🚀 ~ file: role.tsx ~ line 176 ~ .then ~ response", response)
                 setIsLoading(false);
                 getRoles();
             }).catch((error) => {
-                console.log("🚀 ~ file: role.tsx ~ line 202 ~ .then ~ error", error)
                 setIsLoading(false);
                 getRoles();
         });
     };
 
-    const formateData = (currentUserId, returnedRoles) => {
-        const roles = [];
+    // const subscribeForThisRole2 = (role) => {
+    //     setIsLoading(true);
 
-        returnedRoles.map(role=>{
-            if(role.members && role.members.length>0) {
-                const found = role.members.some(thisMember=> thisMember.value === currentUserId);
-                if(!found) roles.push({id: role.id, displayName: role.displayName, status: "unassigned"})
-                else roles.push({id: role.id, displayName: role.displayName, status: "assigned"})
-            } else {
-                roles.push({id: role.id, displayName: role.displayName, status: "unassigned"})
-            }
-        });
+    //     console.log("currentUser", currentUser)
 
-        return roles;
-    } 
+    //     const roleData = {
+    //         "Operations": [{
+    //             "op": "remove",
+    //             // "op": role.status === "assigned"? "remove": "add",
+    //             "value": {
+    //                 "members": [{
+    //                     "display": "TPIAM.COM.PK/tpusr2",
+    //                     "value": currentUser.id
+    //                 }]
+    //             }}
+    //         ],
+    //         "schemas": [
+    //             "urn:ietf:params:scim:api:messages:2.0:PatchOp"
+    //         ]
+    //     }
+
+    //     // updateUserForRole(role.id, roleData)
+    //     //     .then((response) => {
+    //     //         console.log("🚀 ~ file: role.tsx ~ line 176 ~ .then ~ response", response)
+    //     //         setIsLoading(false);
+    //     //         getRoles();
+    //     //     }).catch((error) => {
+    //     //         setIsLoading(false);
+    //     //         getRoles();
+    //     // });
+    // };
 
     // const getRolesOld = () => {
     //     setRoleListFetchRequestLoading(true);
@@ -371,6 +364,7 @@ const RolesPage = (): ReactElement => {
     };
 
     const searchRoleListHandler = (searchQuery: string) => {
+        console.log("🚀 ~ line 367 ~ searchRoleListHandler ~ searchQuery", searchQuery)
         const searchData: SearchRoleInterface = {
             filter: searchQuery,
             schemas: ["urn:ietf:params:scim:api:messages:2.0:SearchRequest"],
@@ -384,6 +378,8 @@ const RolesPage = (): ReactElement => {
 
                 if (response.status === 200) {
                     const results = response?.data?.Resources;
+                    console.log("🚀  line 381 ~ results", results)
+
 
                     let updatedResults = [];
                     if (results) {

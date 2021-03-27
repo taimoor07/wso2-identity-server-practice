@@ -67,6 +67,7 @@ export interface ServiceResourceEndpointsInterface {
     customAssignedRoles: string;
     groups: string;
     customGroups: string;
+    workflowTasks: string;
     updateCustomGroups: string;
     users: string;
     permission: string;

@@ -14,10 +14,8 @@ export const MyWorkflows: FunctionComponent<{}> = (): JSX.Element => {
     const getWorkflowTasksDetails = (): void => {
         getWorkflowTasks()
             .then(response => {
-                console.log("🚀 ~ getWorkflowTasksDetails ~ response", response)
                 setMyWorkflows(response.data)
             }).catch((error) => {
-                console.log("Error while fetching my workflows status data", error)
         });
     };
     

@@ -11,14 +11,13 @@ const httpClient = IdentityClient.getInstance()
     .bind(IdentityClient.getInstance());
 
 export const getWorkflowTasks = (): Promise<any> => {
-console.log("🚀 ~ file: my-workflows.ts ~ line 30 ~ getWorkflowTasks")
     const requestConfig = {
         headers: {
             "Access-Control-Allow-Origin": store.getState().config.deployment.clientHost,
             "Content-Type": "application/json"
         },
         method: HttpMethods.GET,
-        url: "https://localhost:9443/telenorpkstn/rest/v1/me/workflow-tasks"
+        url: store.getState().config.endpoints.workflowTasks + "?startIndex=0"
     };
 
     return httpClient(requestConfig)

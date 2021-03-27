@@ -28,6 +28,24 @@ const httpClient = IdentityClient.getInstance()
     .httpRequest.bind(IdentityClient.getInstance())
     .bind(IdentityClient.getInstance());
 
+// get current user
+export const getCurrentUser = (): Promise<any> => {
+    const requestConfig = {
+        headers: {
+            "Access-Control-Allow-Origin": store.getState().config.deployment.clientHost,
+            "Content-Type": "application/json"
+        },
+        method: HttpMethods.GET,
+        url: store.getState().config.endpoints.me
+    };
+
+    return httpClient(requestConfig)
+        .then((response) => {
+            return Promise.resolve(response);
+        }).catch((error) => {
+            return Promise.reject(error);
+        });
+};
 
 // get assigned and unassigned roles for user
 export const getRolesForUser = (): Promise<any> => {
@@ -37,7 +55,7 @@ export const getRolesForUser = (): Promise<any> => {
             "Content-Type": "application/json"
         },
         method: HttpMethods.GET,
-        url: store.getState().config.endpoints.groups + "?filter=displayName+sw+APP_"
+        url: store.getState().config.endpoints.groups + "?filter=displayName+sw+APP_&attributes=displayName"
     };
 
     return httpClient(requestConfig)
