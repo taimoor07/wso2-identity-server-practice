@@ -19,8 +19,8 @@ const RolesPage = (): JSX.Element => {
 
     return (
         <InnerPageLayout
-            pageTitle=""
-            pageDescription=""
+            pageTitle="Roles"
+            pageDescription="Subscribe and unsubscribe for roles."
         >
             <Grid>
                 <Grid.Row columns={ 1 }>

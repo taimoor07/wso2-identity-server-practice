@@ -288,6 +288,7 @@ export const RoleList: React.FunctionComponent<RoleListProps> = (props: RoleList
         ];
     };
 
+    // console.log("🚀 ~ file: role-list.tsx ~ line 305 ~ roleList?.Resources", roleList?.Resources)
     return (
         <>
             {!isLoading? 

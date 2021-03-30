@@ -204,6 +204,7 @@ const RolesPage = (): ReactElement => {
     };
 
     const handlePaginationChange = (event: React.MouseEvent<HTMLAnchorElement>, data: PaginationProps) => {
+        console.log("🚀 ~ file: role.tsx ~ line 207 ~ handlePaginationChange ~ event", event)
         const offsetValue = (data.activePage as number - 1) * listItemLimit;
         setListOffset(offsetValue);
         setRolesPage(offsetValue, listItemLimit, initialRolList);
@@ -237,11 +238,10 @@ const RolesPage = (): ReactElement => {
         getRoles();
     };
 
+    console.log("--------------- paginatedRoles: ", paginatedRoles)
+    
     return (
-        <PageLayout
-            title="Roles"
-            description="Subscribe and unsubscribe for roles."
-        >
+        <>
             {
                 paginatedRoles?
                 <ListLayout
@@ -331,7 +331,7 @@ const RolesPage = (): ReactElement => {
                 </ListLayout>:
                 <h1>Loading Roles...</h1>
             }
-        </PageLayout>
+        </>
     );
 };
 

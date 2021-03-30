@@ -35,8 +35,7 @@ const KEYSTORE = "keystore";
 const TRUSTSTORE = "truststore";
 
 export const MyworkflowList = (props): ReactElement => {
-    const {list} = props;
-    console.log("🚀 ~ file: my-workflow-list.tsx ~ line 56 ~ MyworkflowList ~ list", list)
+    const { myWorkflows } = props;
     
     const resolveTableColumns = (): TableColumnInterface[] => {
         return [
@@ -83,64 +82,30 @@ export const MyworkflowList = (props): ReactElement => {
         ];
     };
 
-    // return (
-    //     <Grid padded={ true }>
-    //         <Grid.Row columns={ 4 }>
-    //             < Grid.Column mobile={ 6 } tablet={ 6 } computer={ 6 } className="first-column">
-    //                 Id
-    //             </Grid.Column>
-    //             < Grid.Column mobile={ 6 } tablet={ 6 } computer={ 3 } className="first-column">
-    //                 Event Type
-    //             </Grid.Column>
-    //             < Grid.Column mobile={ 6 } tablet={ 6 } computer={ 3 } className="first-column">
-    //                 Status
-    //             </Grid.Column>
-    //             < Grid.Column mobile={ 6 } tablet={ 6 } computer={ 4 } className="first-column">
-    //                 Created At
-    //             </Grid.Column>
-    //         </Grid.Row>
-
-    //         { list.length > 0 ? 
-    //             list.map((item, index)=>{
-    //                 return <Grid.Row columns={ 4 } key={index}>
-    //                         < Grid.Column mobile={ 6 } tablet={ 6 } computer={ 6 } className="first-column">
-    //                             {item.id}
-    //                         </Grid.Column>
-    //                         < Grid.Column mobile={ 6 } tablet={ 6 } computer={ 3 } className="first-column">
-    //                             {item.eventType}
-    //                         </Grid.Column>
-    //                         < Grid.Column mobile={ 6 } tablet={ 6 } computer={ 3 } className="first-column">
-    //                             {item.approvalStatus}
-    //                         </Grid.Column>
-    //                         < Grid.Column mobile={ 6 } tablet={ 6 } computer={ 4 } className="first-column">
-    //                             {item.createdAt}
-    //                         </Grid.Column>
-    //                 </Grid.Row>
-    //             }):
-    //             <div>
-    //                 <p>No workflow lifecycle found!</p>
-    //             </div>
-    //         }
-    //     </Grid>
-    // );
-
+    console.log("🚀 ~ file: my-workflow-myWorkflows.tsx ~ line 101 ~ MyworkflowList ~ myWorkflows", myWorkflows)
     return (
         <>
-            <DataTable<any>
-                className="roles-list"
-                externalSearch={ null }
-                isLoading={ null }
-                loadingStateOptions={null}
-                actions={ null }
-                columns={ resolveTableColumns() }
-                data={ list }
-                onRowClick={ null }
-                placeholders={ null }
-                selectable={ null }
-                showHeader={ true }
-                transparent={ null }
-                data-testid={ null }
-            />
+           { myWorkflows.length > 0? 
+                <DataTable<MyWorkFlowsInterface>
+                    className="roles-list"
+                    externalSearch={ null }
+                    isLoading={ null }
+                    loadingStateOptions={{
+                        count: 10,
+                        imageType: "square"
+                    } }
+                    actions={ null }
+                    columns={ resolveTableColumns() }
+                    data={ myWorkflows }
+                    onRowClick={ null }
+                    placeholders={ null }
+                    selectable={ null }
+                    showHeader={ true }
+                    transparent={ null }
+                    data-testid={ null }
+                />:
+                <h1>Loading workflow tasks</h1>
+            }
         </>
     );
 };
