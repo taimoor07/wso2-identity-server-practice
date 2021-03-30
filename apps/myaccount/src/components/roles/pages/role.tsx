@@ -176,7 +176,6 @@ const RolesPage = (): ReactElement => {
                 const searchedRolesResponse = values[0];
                 if (searchedRolesResponse.status === 200) {
                     const results = searchedRolesResponse?.data?.Resources;
-                    // console.log("🚀  line 395 ~ searchedRolesResponse results", results)
 
                     let updatedResults = [];
                     if (results) {
@@ -188,6 +187,7 @@ const RolesPage = (): ReactElement => {
                         ...results?.data?.Resources,
                         Resources: updatedResults
                     };
+
                     setInitialRoleList(updatedData)
                     setPaginatedRoles(updatedData)
                 }
@@ -204,7 +204,6 @@ const RolesPage = (): ReactElement => {
     };
 
     const handlePaginationChange = (event: React.MouseEvent<HTMLAnchorElement>, data: PaginationProps) => {
-        console.log("🚀 ~ file: role.tsx ~ line 207 ~ handlePaginationChange ~ event", event)
         const offsetValue = (data.activePage as number - 1) * listItemLimit;
         setListOffset(offsetValue);
         setRolesPage(offsetValue, listItemLimit, initialRolList);
@@ -238,8 +237,6 @@ const RolesPage = (): ReactElement => {
         getRoles();
     };
 
-    console.log("--------------- paginatedRoles: ", paginatedRoles)
-    
     return (
         <>
             {

@@ -82,10 +82,9 @@ export const MyworkflowList = (props): ReactElement => {
         ];
     };
 
-    console.log("🚀 ~ file: my-workflow-myWorkflows.tsx ~ line 101 ~ MyworkflowList ~ myWorkflows", myWorkflows)
     return (
         <>
-           { myWorkflows.length > 0? 
+           { myWorkflows && myWorkflows.Resources.length > 0 && 
                 <DataTable<MyWorkFlowsInterface>
                     className="roles-list"
                     externalSearch={ null }
@@ -96,15 +95,14 @@ export const MyworkflowList = (props): ReactElement => {
                     } }
                     actions={ null }
                     columns={ resolveTableColumns() }
-                    data={ myWorkflows }
+                    data={ myWorkflows?.Resources  }
                     onRowClick={ null }
                     placeholders={ null }
                     selectable={ null }
                     showHeader={ true }
                     transparent={ null }
                     data-testid={ null }
-                />:
-                <h1>Loading workflow tasks</h1>
+                />
             }
         </>
     );
