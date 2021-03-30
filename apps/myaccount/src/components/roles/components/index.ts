@@ -17,6 +17,4 @@
  */
 
 export * from "./role-list";
-export * from "./wizard";
-export * from "./edit-role";
 
